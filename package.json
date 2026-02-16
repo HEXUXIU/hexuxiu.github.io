@@ -2,19 +2,19 @@
   "name": "fuwari",
   "type": "module",
   "version": "0.0.1",
-  "scripts": {
-    "dev": "astro dev",
-    "start": "astro dev",
-    "check": "astro check",
-    "build": "astro build && pagefind --site dist",
-    "preview": "astro preview",
-    "astro": "astro",
+"scripts": {
+    "dev": "bun --bun astro dev",
+    "start": "bun --bun astro dev",
+    "check": "bun --bun astro check",
+    "build": "bun --bun astro build && bun x pagefind --site dist",
+    "preview": "bun --bun astro preview",
+    "astro": "bun --bun astro",
     "type-check": "tsc --noEmit --isolatedDeclarations",
-    "new-post": "node scripts/new-post.js",
-    "format": "biome format --write ./src",
-    "lint": "biome check --write ./src",
-    "preinstall": "npx only-allow pnpm"
-  },
+    "new-post": "bun scripts/new-post.js",
+    "format": "bun x biome format --write ./src",
+    "lint": "bun x biome check --write ./src"
+}
+,
   "dependencies": {
     "@astrojs/check": "^0.9.6",
     "@astrojs/rss": "^4.0.14",

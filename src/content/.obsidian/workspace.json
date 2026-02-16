@@ -1,0 +1,226 @@
+{
+  "main": {
+    "id": "8830f32d69b924d4",
+    "type": "split",
+    "children": [
+      {
+        "id": "8f103777ea41e130",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "af3f81da9be0c9c5",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "posts/折腾日记：使用edgeone加速网站（上）.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "折腾日记：使用edgeone加速网站（上）"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "9c7ba0f629deb506",
+    "type": "split",
+    "children": [
+      {
+        "id": "f8be41bd882860c4",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "0eee302acf73cfbd",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "文件列表"
+            }
+          },
+          {
+            "id": "23b1c4dd5c025f17",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "搜索"
+            }
+          },
+          {
+            "id": "d6389a506bc3be2a",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "书签"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "3f68629e7c681423",
+    "type": "split",
+    "children": [
+      {
+        "id": "e9f9e913cd8cb862",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "e8268d43f0600de3",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "assets/images/2025/07/screenshot-1752669006512-768x332.png",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "screenshot-1752669006512-768x332 的反向链接列表"
+            }
+          },
+          {
+            "id": "8b2b61d920cf1b23",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "assets/images/2025/07/screenshot-1752669006512-768x332.png",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "screenshot-1752669006512-768x332 的出链列表"
+            }
+          },
+          {
+            "id": "bac7ba8b9fb5fd97",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "标签"
+            }
+          },
+          {
+            "id": "ded5cc2f3c893f11",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "添加笔记属性"
+            }
+          },
+          {
+            "id": "cb803774130f88c8",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "assets/images/2025/07/screenshot-1752669006512-768x332.png",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "screenshot-1752669006512-768x332 的大纲"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:打开快速切换": false,
+      "graph:查看关系图谱": false,
+      "canvas:新建白板": false,
+      "daily-notes:打开/创建今天的日记": false,
+      "templates:插入模板": false,
+      "command-palette:打开命令面板": false,
+      "bases:创建新数据库": false,
+      "templater-obsidian:Templater": false
+    }
+  },
+  "active": "af3f81da9be0c9c5",
+  "lastOpenFiles": [
+    "posts/折腾日记：使用edgeone加速网站，并自动续签ssl证书（下.md",
+    "posts/折腾日记：使用edgeone加速网站（上）.md",
+    "posts/你好，世界.md",
+    "assets/images/部署AllinSSL.png",
+    "assets/images/微信图片_20250716183851_12.jpg",
+    "posts/本站修复后台成功.md",
+    "posts/post.md",
+    "posts/未命名.md",
+    "未命名.base",
+    "assets/images/avatar.svg",
+    "assets/images/新建文本文档.txt",
+    "assets/images/bj.webp",
+    "assets/images/wp4729537.jpg",
+    "assets/images/72e7bd2941e01.bk.png",
+    "assets/images/自动化部署.png",
+    "assets/images/wp4729537.webp",
+    "assets/images/screenshot-1752669006512.png",
+    "assets/images/screenshot-1752664132117.png",
+    "posts/纯小白教程系列-安装和配置minecraft-java版（我的世界-java.md",
+    "posts/纯小白教程-安装系统（windows篇）.md",
+    "assets/images/2024/11",
+    "assets/images/2024",
+    "assets/images/wpcode/cache/library/snippets.json",
+    "assets/images/wpcode/cache/library/profile_wpforms.json",
+    "assets/images/wpcode/cache/library/index.html",
+    "assets/images/wpcode/cache/docs.json",
+    "assets/images/wpcode/cache/index.html",
+    "assets/images/wpcode/cache/library",
+    "posts/这是本博客第一个说说.md",
+    "posts/markdown-extended.md",
+    "posts/video.md",
+    "posts/markdown.md",
+    "posts/expressive-code.md",
+    "posts/draft.md",
+    "posts/guide/index.md",
+    "spec/about.md"
+  ]
+}
