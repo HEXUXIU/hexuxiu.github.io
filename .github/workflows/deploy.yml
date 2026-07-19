@@ -1,8 +1,8 @@
-name: Deploy Fuwari with Bun 🚀
+name: Deploy Zola Blog 🚀
 
 on:
   push:
-    branches: [main] 
+    branches: [main]
 
 permissions:
   contents: read
@@ -16,23 +16,18 @@ jobs:
       - name: Checkout 🛬
         uses: actions/checkout@v4
 
-      - name: Setup Bun ⚡️
-        uses: oven-sh/setup-bun@v1
+      - name: Install Zola ⚡️
+        uses: taiki-e/install-action@v2
         with:
-          bun-version: latest
-
-      - name: Install Dependencies 📦
-        run: bun install
+          tool: zola@0.19.2
 
       - name: Build Blog 🛠
-        run: |
-          ./node_modules/.bin/astro build
-          bun x pagefind --site dist
+        run: zola build
 
       - name: Upload Artifacts 📤
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist
+          path: ./public
 
   deploy:
     needs: build

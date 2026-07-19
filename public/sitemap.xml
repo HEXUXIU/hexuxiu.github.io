@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>https://blog.o0o.top/</loc>
+    </url>
+    <url>
+        <loc>https://blog.o0o.top/posts/</loc>
+    </url>
+    <url>
+        <loc>https://blog.o0o.top/posts/edgeone-part1/</loc>
+        <lastmod>2025-07-16</lastmod>
+    </url>
+    <url>
+        <loc>https://blog.o0o.top/posts/edgeone-part2/</loc>
+        <lastmod>2025-07-16</lastmod>
+    </url>
+    <url>
+        <loc>https://blog.o0o.top/posts/fix-admin/</loc>
+        <lastmod>2025-05-24</lastmod>
+    </url>
+    <url>
+        <loc>https://blog.o0o.top/posts/hello-world/</loc>
+        <lastmod>2024-11-16</lastmod>
+    </url>
+</urlset>
