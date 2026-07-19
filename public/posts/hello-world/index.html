@@ -2,106 +2,169 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
   <title>你好，世界 - 贺煦修的博客</title>
   <meta name="description" content="贺煦修的个人博客">
-  <link rel="icon" href="/assets/images/avatar.svg">
+  <meta name="theme-color" content="#5e72e4">
+  <link rel="icon" href="/assets/img/favicon.ico" type="image/x-icon">
   <link rel="alternate" type="application/atom+xml" title="RSS" href="https://blog.o0o.top/atom.xml">
+
+  <!-- Argon CSS -->
+  <link href="/assets/argon_css_merged.css" rel="stylesheet">
+  <link href="/style.css" rel="stylesheet">
+  <link href="https://fonts.loli.net/css?family=Open+Sans:300,400,600,700|Noto+Serif+SC:300,600&display=swap" rel="stylesheet">
+
+  <!-- Theme color -->
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg: #ffffff;
-      --text: #1a1a2e;
-      --text-secondary: #555;
-      --primary: #2563eb;
-      --border: #e5e7eb;
-      --card-bg: #f9fafb;
-      --code-bg: #1e293b;
-      --max-width: 720px;
+      --themecolor: #5e72e4;
     }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #0f172a;
-        --text: #e2e8f0;
-        --text-secondary: #94a3b8;
-        --primary: #60a5fa;
-        --border: #334155;
-        --card-bg: #1e293b;
-        --code-bg: #0f172a;
-      }
-    }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.7;
-      min-height: 100vh;
-    }
-    .container { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; }
-    nav { padding: 1.5rem 0; border-bottom: 1px solid var(--border); margin-bottom: 2rem; }
-    nav .container { display: flex; justify-content: space-between; align-items: center; }
-    nav a { color: var(--text); text-decoration: none; font-weight: 600; font-size: 1.1rem; }
-    nav .nav-links a { margin-left: 1.5rem; font-weight: 400; font-size: 0.95rem; color: var(--text-secondary); }
-    nav .nav-links a:hover { color: var(--primary); }
-    main { min-height: calc(100vh - 200px); padding-bottom: 3rem; }
-    h1 { font-size: 2rem; font-weight: 700; margin-bottom: 1rem; line-height: 1.3; }
-    h2 { font-size: 1.5rem; margin-top: 2rem; margin-bottom: 0.75rem; }
-    h3 { font-size: 1.2rem; margin-top: 1.5rem; margin-bottom: 0.5rem; }
-    p { margin-bottom: 1rem; }
-    a { color: var(--primary); text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    img { max-width: 100%; height: auto; border-radius: 8px; margin: 1rem 0; }
-    code { background: var(--card-bg); padding: 0.2em 0.4em; border-radius: 4px; font-size: 0.9em; }
-    pre { background: var(--code-bg); color: #e2e8f0; padding: 1rem; border-radius: 8px; overflow-x: auto; margin: 1rem 0; }
-    pre code { background: none; padding: 0; }
-    blockquote { border-left: 3px solid var(--primary); padding-left: 1rem; color: var(--text-secondary); margin: 1rem 0; }
-    ul, ol { margin-bottom: 1rem; padding-left: 1.5rem; }
-    hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
-    footer { text-align: center; padding: 2rem 0; color: var(--text-secondary); font-size: 0.85rem; border-top: 1px solid var(--border); }
-    .post-list { list-style: none; padding: 0; }
-    .post-list li { padding: 1.5rem 0; border-bottom: 1px solid var(--border); }
-    .post-list li:last-child { border-bottom: none; }
-    .post-list .date { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.25rem; }
-    .post-list a { color: var(--text); font-size: 1.15rem; font-weight: 600; }
-    .post-list a:hover { color: var(--primary); }
-    .post-meta { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 2rem; }
-    .tags { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem; }
-    .tag { background: var(--card-bg); padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.8rem; color: var(--text-secondary); }
-    @media (max-width: 640px) { h1 { font-size: 1.6rem; } }
   </style>
 </head>
 <body>
-  <nav>
+  <!-- 导航栏 -->
+  <div id="toolbar">
+    <header class="header-global">
+      <nav id="navbar-main" class="navbar navbar-main navbar-expand-lg navbar-transparent navbar-light bg-primary">
+        <div class="container">
+          <a class="navbar-brand" href="/">贺煦修的博客</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar_global">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="navbar-collapse collapse" id="navbar_global">
+            <ul class="navbar-nav navbar-nav-hover align-items-lg-center ml-auto">
+              
+                
+                  <li class="nav-item">
+                    <a href="https:&#x2F;&#x2F;github.com&#x2F;HEXUXIU" class="nav-link">
+                      <span class="nav-link-inner--text">GitHub</span>
+                    </a>
+                  </li>
+                
+                  <li class="nav-item">
+                    <a href="&#x2F;posts" class="nav-link">
+                      <span class="nav-link-inner--text">归档</span>
+                    </a>
+                  </li>
+                
+                  <li class="nav-item">
+                    <a href="&#x2F;" class="nav-link">
+                      <span class="nav-link-inner--text">首页</span>
+                    </a>
+                  </li>
+                
+              
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+  </div>
+
+  <!-- Banner -->
+  <section id="banner" class="banner section section-lg section-shaped bg-gradient-primary">
+    <div class="shape shape-style-1">
+      <span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span>
+    </div>
+    <div class="banner-container container text-center">
+      <div class="banner-title text-white">
+        <span class="banner-title-inner">贺煦修的博客</span>
+      </div>
+      
+        <span class="banner-subtitle d-block">Hi, 你好</span>
+      
+    </div>
+  </section>
+
+  <!-- 浮动按钮 -->
+  <div id="float_action_buttons" class="float-action-buttons">
+    <button id="fabtn_back_to_top" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" title="回到顶部">
+      <span class="btn-inner--icon"><i class="fa fa-angle-up"></i></span>
+    </button>
+    <button id="fabtn_toggle_darkmode" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" title="夜间模式">
+      <span class="btn-inner--icon"><i class="fa fa-moon-o"></i></span>
+    </button>
+    <button id="fabtn_open_sidebar" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" title="菜单">
+      <span class="btn-inner--icon"><i class="fa fa-bars"></i></span>
+    </button>
+  </div>
+
+  <!-- 内容 -->
+  <div id="content" class="site-content">
     <div class="container">
-      <a href="https:&#x2F;&#x2F;blog.o0o.top">贺煦修的博客</a>
-      <div class="nav-links">
-        <a href="https:&#x2F;&#x2F;blog.o0o.top">首页</a>
-        <a href="https://blog.o0o.top/posts">文章</a>
-        <a href="https:&#x2F;&#x2F;github.com&#x2F;HEXUXIU" target="_blank">GitHub</a>
+      <div class="row">
+        <div class="col-lg-8">
+          <main id="main" class="site-main" role="main">
+            
+  <article class="post card bg-white shadow-sm border-0">
+    <header class="post-header text-center pt-4">
+      <h1 class="post-title h3">你好，世界</h1>
+      <div class="post-meta text-muted small mt-2">
+        <time>2024-11-16 00:00</time>
+        
+      </div>
+    </header>
+    <div class="post-content p-4">
+      <p>这是本博客的第一篇文章</p>
+
+    </div>
+  </article>
+
+          </main>
+        </div>
+        <!-- 侧栏 -->
+        <div class="col-lg-4">
+          <aside class="widget-area" role="complementary">
+            <div class="card bg-white shadow-sm border-0">
+              <div class="card-body text-center">
+                <img src="&#x2F;assets&#x2F;images&#x2F;avatar.svg" class="img-fluid rounded-circle shadow-sm" style="width: 100px;" alt="avatar">
+                <h6 class="mt-3">贺煦修</h6>
+                
+                <div class="site-state d-flex justify-content-around mt-3">
+                  <div class="site-state-item text-center">
+                    <span class="site-state-item-count d-block font-weight-bold">4</span>
+                    <span class="site-state-item-name">文章</span>
+                  </div>
+                </div>
+                
+                  <div class="mt-3">
+                    
+                      <a href="mailto:hexuiu@gmail.com" target="_blank" class="mr-2">Email</a>
+                    
+                      <a href="https:&#x2F;&#x2F;github.com&#x2F;HEXUXIU" target="_blank" class="mr-2">GitHub</a>
+                    
+                  </div>
+                
+              </div>
+            </div>
+          </aside>
+        </div>
       </div>
     </div>
-  </nav>
-  <main>
-    <div class="container">
-      
-<article>
-  <h1>你好，世界</h1>
-  <div class="post-meta">
-    <time>2024-11-16</time>
-    
   </div>
-  <div>
-    <p>这是本博客的第一篇文章</p>
 
-  </div>
-</article>
-
-    </div>
-  </main>
-  <footer>
-    <div class="container">
-      <p>&copy; 2026 贺煦修. Powered by <a href="https://www.getzola.org/" target="_blank">Zola</a>.</p>
+  <!-- 页脚 -->
+  <footer id="footer" class="site-footer card shadow-sm border-0 mt-4">
+    <div class="text-center py-3">
+      <p>Theme <a href="https://github.com/solstice23/hexo-theme-argon"><strong>Argon</strong></a> | Powered by Zola</p>
     </div>
   </footer>
+
+  <!-- Argon JS -->
+  <script src="/assets/argon_js_merged.js"></script>
+  <script src="/assets/js/argon.min.js"></script>
+  <script src="/argontheme.js"></script>
+
+  <script>
+    // 简单的暗色模式切换
+    document.getElementById('fabtn_toggle_darkmode')?.addEventListener('click', function() {
+      document.documentElement.classList.toggle('darkmode');
+    });
+    // 回到顶部
+    document.getElementById('fabtn_back_to_top')?.addEventListener('click', function() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
 </body>
 </html>

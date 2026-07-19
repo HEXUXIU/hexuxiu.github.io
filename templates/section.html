@@ -3,25 +3,22 @@
 {% block title %}文章 - {{ config.title }}{% endblock title %}
 
 {% block content %}
-<h1>文章</h1>
-
-{% if section.pages %}
-<ul class="post-list">
-  {% for post in section.pages %}
-  <li>
-    <div class="date">{{ post.date | date(format="%Y-%m-%d") }}</div>
-    <a href="{{ post.permalink }}">{{ post.title }}</a>
-    {% if post.taxonomies.tags %}
-    <div class="tags">
-      {% for tag in post.taxonomies.tags %}
-      <span class="tag">{{ tag }}</span>
-      {% endfor %}
-    </div>
-    {% endif %}
-  </li>
-  {% endfor %}
-</ul>
-{% else %}
-<p>暂无文章</p>
-{% endif %}
+  <h2 class="mb-4">文章归档</h2>
+  {% if section.pages %}
+    {% for post in section.pages %}
+      <article class="post card bg-white shadow-sm border-0 mb-4">
+        <header class="post-header text-center pt-4">
+          <a class="post-title h3" href="{{ post.permalink }}">{{ post.title }}</a>
+          <div class="post-meta text-muted small mt-2">
+            <time>{{ post.date | date(format="%Y-%m-%d") }}</time>
+          </div>
+        </header>
+        <div class="post-content p-4">
+          <p>{{ post.content | striptags | truncate(length=200) }}</p>
+        </div>
+      </article>
+    {% endfor %}
+  {% else %}
+    <p>暂无文章</p>
+  {% endif %}
 {% endblock content %}

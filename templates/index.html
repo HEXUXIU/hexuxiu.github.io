@@ -1,23 +1,30 @@
 {% extends "base.html" %}
 
-{% block content %}
-<h1>{{ config.title }}</h1>
-<p style="color: var(--text-secondary); margin-bottom: 2rem;">{{ config.description }}</p>
+{% block title %}{{ config.title }}{% endblock title %}
 
-{% set posts = get_section(path="posts/_index.md") %}
-<ul class="post-list">
+{% block content %}
+  {% set posts = get_section(path="posts/_index.md") %}
   {% for post in posts.pages %}
-  <li>
-    <div class="date">{{ post.date | date(format="%Y-%m-%d") }}</div>
-    <a href="{{ post.permalink }}">{{ post.title }}</a>
-    {% if post.taxonomies.tags %}
-    <div class="tags">
-      {% for tag in post.taxonomies.tags %}
-      <span class="tag">{{ tag }}</span>
-      {% endfor %}
-    </div>
-    {% endif %}
-  </li>
+    <article class="post card bg-white shadow-sm border-0 mb-4">
+      <header class="post-header text-center pt-4">
+        <a class="post-title h3" href="{{ post.permalink }}">{{ post.title }}</a>
+        <div class="post-meta text-muted small mt-2">
+          <time>{{ post.date | date(format="%Y-%m-%d %H:%M") }}</time>
+          {% if post.taxonomies.tags %}
+            <span class="ml-2">
+              {% for tag in post.taxonomies.tags %}
+                <span class="badge badge-secondary">{{ tag }}</span>
+              {% endfor %}
+            </span>
+          {% endif %}
+        </div>
+      </header>
+      <div class="post-content p-4">
+        <p>{{ post.content | striptags | truncate(length=200) }}</p>
+      </div>
+      <div class="text-center pb-3">
+        <a href="{{ post.permalink }}" class="btn btn-primary btn-sm">阅读全文</a>
+      </div>
+    </article>
   {% endfor %}
-</ul>
 {% endblock content %}

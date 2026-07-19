@@ -3,20 +3,22 @@
 {% block title %}{{ page.title }} - {{ config.title }}{% endblock title %}
 
 {% block content %}
-<article>
-  <h1>{{ page.title }}</h1>
-  <div class="post-meta">
-    <time>{{ page.date | date(format="%Y-%m-%d") }}</time>
-    {% if page.taxonomies.tags %}
-    <div class="tags" style="display: inline; margin-left: 1rem;">
-      {% for tag in page.taxonomies.tags %}
-      <span class="tag">{{ tag }}</span>
-      {% endfor %}
+  <article class="post card bg-white shadow-sm border-0">
+    <header class="post-header text-center pt-4">
+      <h1 class="post-title h3">{{ page.title }}</h1>
+      <div class="post-meta text-muted small mt-2">
+        <time>{{ page.date | date(format="%Y-%m-%d %H:%M") }}</time>
+        {% if page.taxonomies.tags %}
+          <span class="ml-2">
+            {% for tag in page.taxonomies.tags %}
+              <span class="badge badge-secondary">{{ tag }}</span>
+            {% endfor %}
+          </span>
+        {% endif %}
+      </div>
+    </header>
+    <div class="post-content p-4">
+      {{ page.content | safe }}
     </div>
-    {% endif %}
-  </div>
-  <div>
-    {{ page.content | safe }}
-  </div>
-</article>
+  </article>
 {% endblock content %}

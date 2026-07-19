@@ -1,4 +1,4 @@
-# Zola config
+# Zola config — Argon Theme
 base_url = "https://blog.o0o.top"
 title = "贺煦修的博客"
 description = "贺煦修的个人博客"
@@ -25,7 +25,97 @@ highlight_theme = "dracula"
 smart_punctuation = true
 render_emoji = true
 
+# ===== Argon 主题配置 =====
 [extra]
 author = "贺煦修"
 github = "https://github.com/HEXUXIU"
 email = "hexuiu@gmail.com"
+
+# 主题色
+theme_color = "#5e72e4"
+card_radius = 18
+card_shadow = "big"
+font = "sans"
+
+# 顶栏
+toolbar_title = "贺煦修的博客"
+toolbar_icon = ""
+toolbar_icon_link = "/"
+# 顶栏菜单: 名称 = 链接
+toolbar_menu = { "首页" = "/", "归档" = "/posts", "GitHub" = "https://github.com/HEXUXIU" }
+
+# Banner
+banner_title = "贺煦修的博客"
+banner_subtitle = "Hi, 你好"
+banner_background_url = ""
+banner_background_color_type = "bg-gradient-primary"
+banner_background_hide_shapes = false
+enable_banner_title_typing_effect = false
+transparent_banner = false
+
+# 页面背景
+page_background_url = ""
+page_background_dark_url = ""
+page_background_opacity = 0.3
+
+# 侧栏
+sidebar_announcement = ""
+sidebar_banner_title = "贺煦修"
+sidebar_banner_subtitle = ""
+sidebar_auther_image = "/assets/images/avatar.svg"
+sidebar_auther_name = "贺煦修"
+leftbar_menu = { "首页" = "/", "归档" = "/posts", "GitHub" = "https://github.com/HEXUXIU" }
+# 作者链接: 名称 = 链接
+leftbar_author_links = { "GitHub" = "https://github.com/HEXUXIU", "Email" = "mailto:hexuiu@gmail.com" }
+# 友链
+leftbar_friend_links = false
+
+# 夜间模式
+darkmode_autoswitch = "system"
+enable_amoled_dark = false
+
+# 文章
+article_meta = "time|categories|words|readingtime"
+article_header_style = 1
+enable_into_article_animation = true
+excerpt = true
+reading_speed_cn = 300
+reading_speed_en = 200
+
+# 代码高亮
+enable_code_highlight = true
+code_theme = "atom-one-dark"
+
+# 浮动按钮
+fab_show_darkmode_button = true
+fab_show_settings_button = true
+fab_show_gotocomment_button = false
+
+# 其他
+enable_lazyload = false
+enable_zoomify = false
+enable_mobile_scale = true
+enable_pangu = false
+enable_headroom = true
+pjax_disabled = false
+smoothscroll = "disabled"
+show_toolbar_mask = true
+show_headindex_number = false
+show_customize_theme_color_picker = false
+banner_typing_effect_interval = 100
+
+# 页脚
+footer_html = ""
+
+# 评论 (暂不启用)
+[extra.gitalk]
+enable = false
+
+[extra.waline]
+enable = false
+
+[extra.baidu_analytics]
+enable = false
+
+[extra.gtag]
+enable = false
