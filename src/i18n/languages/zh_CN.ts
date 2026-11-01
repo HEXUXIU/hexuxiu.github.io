@@ -92,7 +92,7 @@ export const zh_CN: Translation = {
 	[Key.tagsLabel]: "标签",
 	[Key.recordsIndexed]: "条记录已索引",
 	[Key.pageLabel]: "第 {page} 页",
-	[Key.homeIntro]: "咖啡、代码与夜晚。在信息洪流之外，为思想留一张桌子。",
+	[Key.homeIntro]: "自己动手做的东西、踩过的坑、测出来的数字——一个人的折腾记录。",
 
 	[Key.subscribeTitle]: "订阅 / Subscribe",
 	[Key.subscribeIntro]:

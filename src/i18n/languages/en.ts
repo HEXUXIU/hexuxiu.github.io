@@ -95,7 +95,7 @@ export const en: Translation = {
 	[Key.recordsIndexed]: "records indexed",
 	[Key.pageLabel]: "Page {page}",
 	[Key.homeIntro]:
-		"Coffee, code and night. A table for thoughts beyond the information flood.",
+		"Things I built, pitfalls I hit, numbers I measured — one person's build log.",
 
 	[Key.subscribeTitle]: "Subscribe",
 	[Key.subscribeIntro]:
