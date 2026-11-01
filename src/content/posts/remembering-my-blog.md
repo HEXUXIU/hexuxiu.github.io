@@ -4,6 +4,7 @@ published: 2026-11-01
 updated: 2026-11-01
 draft: false
 description: 突然想起自己还有个博客：早期 ChatGPT 润色的内容看着尴尬，决定在 Zola 和 Astro（Lonetrail）之间选后者复活它，内容从论坛同步。
+image: "/images/covers/remembering-my-blog.webp"
 tags: ["随笔"]
 category: "未分类"
 lang: "zh"
@@ -25,7 +26,7 @@ https://hexuxiu.github.io/
 
 然后，刚好昨天重新搞了个muse号，想不到能干嘛了，突然就回想到这个事
 
-![image](../assets/images/old-blog-homepage.jpg)
+![旧版博客首页截图](../assets/images/old-blog-homepage.webp)
 
 *可能就是token太多了促成的吧…*
 

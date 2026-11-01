@@ -4,6 +4,7 @@ published: 2026-10-24
 updated: 2026-10-24
 draft: false
 description: NodeLoc 的看板娘定名 Enna（恩娜）之后，我建了她的 Wiki，做了 Live2D 预览，还给她起了个自己的中文译名：𡟯雫。
+image: "/images/covers/enna-name-translation.webp"
 tags: ["随笔"]
 category: "未分类"
 lang: "zh"
@@ -15,8 +16,8 @@ pinned: false
 所做
 这是一个关于恩娜enna的Wiki：https://www.nodeloc.wiki/w/%E6%81%A9%E5%A8%9C%EF%BC%88NodeLoc%20%E5%A8%98%EF%BC%89
 这是初步制作的live2D模型的预览
-![mmexport1792810011678](../assets/images/enna-preview-1.jpg)
-![mmexport1792810009065](../assets/images/enna-preview-2.jpg)
+![Enna Live2D 预览](../assets/images/enna-preview-1.webp)
+![Enna Live2D 预览](../assets/images/enna-preview-2.webp)
 稍后会把模型文件发布
 对了，感觉Enna酱的中文名好奇怪 不知道能不能改
 比如说我自己随便翻译的：蒽雫?（因为实在是找不到en音的中文的对应啦）

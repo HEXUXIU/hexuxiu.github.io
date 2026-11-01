@@ -4,6 +4,7 @@ published: 2026-10-30
 updated: 2026-10-30
 draft: false
 description: 容器日志没有设上限，一路写到根分区 100%，服务全挂。复盘这次事故：根因、已经在跑的守护和巡检为什么没发现、以及教训。
+image: "/images/covers/disk-full-log-incident.webp"
 tags: ["技术"]
 category: "技术"
 lang: "zh"
@@ -88,7 +89,7 @@ new-api Up 5 days (healthy)
 
 
 还有之前说过的故障一次就赔偿一次！
-![image](../assets/images/log-77g-1.png)
+![磁盘占用截图](../assets/images/log-77g-1.webp)
 因为这次故障近了72小时，而且目前TTB全站已经达到705用户！故发这么多啦
 每个人限领取一份哦 <img src="/images/emoji/08-chong.png" alt=":08-chong:" style="display:inline-block;height:2em;width:2em;vertical-align:-0.4em">
 神秘代码见[论坛原帖](https://www.nodeloc.com/t/topic/115935)。

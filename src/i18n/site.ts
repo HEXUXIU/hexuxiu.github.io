@@ -10,7 +10,7 @@ export function getSiteSubtitle(locale: Locale = DEFAULT_LOCALE): string {
 }
 
 export function getSiteDescription(locale: Locale = DEFAULT_LOCALE): string {
-	return locale === "en" ? siteMeta.descriptionEn : siteConfig.subtitle;
+	return locale === "en" ? siteMeta.descriptionEn : siteMeta.description;
 }
 
 export function getProfileBio(locale: Locale = DEFAULT_LOCALE): string {

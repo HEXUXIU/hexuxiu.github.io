@@ -4,6 +4,7 @@ published: 2026-10-17
 updated: 2026-10-17
 draft: false
 description: 多年搞不定的京瓷 FS-1040 打印机驱动，这次靠 AI 在 Deepin 20.9 上装上了：关键是过滤器必须由 root 放在标准目录。
+image: "/images/covers/kyocera-fs1040-driver.webp"
 tags: ["技术"]
 category: "技术"
 lang: "zh"
@@ -40,10 +41,10 @@ pinned: false
 
 附打印测试和过程时截图：
 
-![image](../assets/images/kyocera-print-test.jpg)
+![打印测试](../assets/images/kyocera-print-test.webp)
 
-![image](../assets/images/kyocera-photo-1.jpg)
+![打印机照片](../assets/images/kyocera-photo-1.webp)
 
-![image](../assets/images/kyocera-photo-2.jpg)
+![打印机照片](../assets/images/kyocera-photo-2.webp)
 
 原发于 NodeLoc 论坛：https://www.nodeloc.com/t/topic/114339

@@ -1,5 +1,6 @@
 ---
 title: 折腾日记：使用EdgeOne加速网站，并自动续签SSL证书（下）
+image: "/images/covers/edgeone-part2.webp"
 published: 2025-07-16
 tags: []
 ---
@@ -16,11 +17,11 @@ tags: []
 
 ## 部署AllinSSL
 
-注册完成后，点击应用商店，如图 ![500](../assets/images/screenshot-1752669006512.png) 
-然后找到AllinSSL，首页就有，很好找，第二行就是 ![500](../assets/images/部署AllinSSL.png)
+注册完成后，点击应用商店，如图 ![EdgeOne 控制台截图](../assets/images/screenshot-1752669006512.webp) 
+然后找到AllinSSL，首页就有，很好找，第二行就是 ![AllinSSL 部署截图](../assets/images/部署AllinSSL.webp)
 部署，这里有三个参数，第一个是安全入口。相信使用过Linux面板的朋友都知道这是干什么的，这里就不多bb（但是你要么不修改，要么得自己记住了）。第二个是用户名，第三个是密码，自己记住即可。
 部署完成后，登录AllinSSL，添加自动化部署。
-![](../assets/images/自动化部署.png)
+![自动化部署截图](../assets/images/自动化部署.webp)
 按照上面的一步步填写（懒得截图了，自己摸索吧），需要提醒的是**证书**选择**Let's Encrypt**（免费），**部署**选择腾讯云EdgeOne（自定义ssl需要3DM验证，不会扣钱的放心吧），**DNS提供商**按照[官方文档](https://allinssl.com/guide/help/provider/)填写，提个醒，Cloudflare 是需要Global API Key的，别搞错了。
 
 # 最终完成

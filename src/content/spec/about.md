@@ -1,6 +1,6 @@
 ---
 title: "关于"
-description: ""
+description: "贺煦修的个人博客：自己动手做的东西、踩过的坑、测出来的数字。"
 published: 2024-11-16
 ---
 

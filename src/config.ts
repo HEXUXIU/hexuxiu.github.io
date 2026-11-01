@@ -99,6 +99,7 @@ export const siteMeta = {
 	version: cfg.site.version,
 	titleEn: cfg.site.title_en,
 	subtitleEn: cfg.site.subtitle_en,
+	description: cfg.site.description,
 	descriptionEn: cfg.site.description_en,
 };
 
