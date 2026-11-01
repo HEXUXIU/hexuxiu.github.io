@@ -222,29 +222,6 @@ if (isPostPage) {
 			})();
 		</script>
 		<script is:inline>
-			(() => {
-				const enHref = document.documentElement.dataset.enHref;
-				if (!enHref) return;
-				if (
-					location.pathname === '/en' ||
-					location.pathname.startsWith('/en/')
-				)
-					return;
-				let pref = null;
-				try {
-					pref = localStorage.getItem('lang');
-				} catch {
-					pref = null;
-				}
-				const browserEn = (navigator.language || '')
-					.toLowerCase()
-					.startsWith('en');
-				if (pref === 'en' || (!pref && browserEn)) {
-					location.replace(enHref);
-				}
-			})();
-		</script>
-		<script is:inline>
 			document.addEventListener('click', (event) => {
 				const el = event.target.closest
 					? event.target.closest('[data-lang-switch]')

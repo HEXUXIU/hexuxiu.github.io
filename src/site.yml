@@ -1,7 +1,7 @@
 site:
   title: "贺煦修的博客"
   title_en: "HEXUXIU's BLOG"
-  subtitle: "hi, 你好"
+  subtitle: "Hi, 你好"
   subtitle_en: "Hi, hello"
   description: "HEXUXIU's personal blog"
   description_en: "HEXUXIU's personal blog"
@@ -19,7 +19,7 @@ site:
 
 profile:
   name: "贺煦修"
-  bio: "hi, 你好"
+  bio: "Hi, 你好"
   bio_en: "Hi, hello"
   links:
     - name: "GitHub"
