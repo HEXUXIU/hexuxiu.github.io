@@ -1,0 +1,46 @@
+---
+import { DEFAULT_LOCALE, type Locale } from "../../i18n/locales";
+import { formatDate } from "../../utils/date-utils";
+import BlogCard from "./BlogCard.astro";
+
+interface Props {
+	title: string;
+	category: string;
+	published: Date;
+	url: string;
+	description: string;
+	index: number;
+	alt?: boolean;
+	tags?: string[];
+	minutes?: number;
+	lang?: Locale;
+}
+
+const {
+	title,
+	category,
+	published,
+	url,
+	description,
+	index,
+	alt = false,
+	tags = [],
+	minutes,
+	lang = DEFAULT_LOCALE,
+} = Astro.props;
+
+const date = formatDate(published).replace(/\//g, ".");
+---
+
+<BlogCard
+    title={title}
+    summary={description}
+    category={category}
+    date={date}
+    index={index}
+    href={url}
+    alt={alt}
+    tags={tags}
+    minutes={minutes}
+    lang={lang}
+/>

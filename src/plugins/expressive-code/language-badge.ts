@@ -1,50 +1,63 @@
-/**
- * Based on the discussion at https://github.com/expressive-code/expressive-code/issues/153#issuecomment-2282218684
- */
-import { definePlugin } from "@expressive-code/core";
+import type { ExpressiveCodePlugin } from "@expressive-code/core";
+import { h } from "hastscript";
 
-export function pluginLanguageBadge() {
-	return definePlugin({
-		name: "Language Badge",
-		// @ts-expect-error
-		baseStyles: ({ _cssVar }) => `
-      [data-language]::before {
-        position: absolute;
-        z-index: 2;
-        right: 0.5rem;
-        top: 0.5rem;
-        padding: 0.1rem 0.5rem;
-        content: attr(data-language);
-        font-family: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-        font-size: 0.75rem;
-        font-weight: bold;
-        text-transform: uppercase;
-        color: oklch(0.75 0.1 var(--hue));
-        background: oklch(0.33 0.035 var(--hue));
-        border-radius: 0.5rem;
-        pointer-events: none;
-        transition: opacity 0.3s;
-        opacity: 0;
-      }
-      .frame:not(.has-title):not(.is-terminal) {
-        @media (hover: none) {
-          & [data-language]::before {
-            opacity: 1;
-            margin-right: 3rem;
-          }
-          & [data-language]:active::before {
-            opacity: 0;
-          }
-        }
-        @media (hover: hover) {
-          & [data-language]::before {
-            opacity: 1;
-          }
-          &:hover [data-language]::before {
-            opacity: 0;
-          }
-        }
-      }
-    `,
-	});
+export function pluginLanguageBadge(): ExpressiveCodePlugin {
+	return {
+		name: "Lonetrail Language Badge",
+		baseStyles: `
+            .lonetrail-badge {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                padding: 0.5rem 1rem;
+                background: #24221E;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            }
+            .lonetrail-dots {
+                display: flex;
+                gap: 0.25rem;
+            }
+            .lonetrail-dot {
+                width: 6px;
+                height: 6px;
+            }
+            .lonetrail-dot-red { background: #A33332; opacity: 0.8; }
+            .lonetrail-dot-gold { background: #C29145; opacity: 0.8; }
+            .lonetrail-dot-teal { background: #4B8D9E; opacity: 0.8; }
+            
+            .lonetrail-protocol {
+                font-family: var(--font-mono);
+                font-size: 10px;
+                font-weight: 900;
+                letter-spacing: 0.2em;
+                color: rgba(237, 230, 214, 0.8);
+                text-transform: uppercase;
+            }
+            .lonetrail-lang {
+                color: #D4621A;
+            }
+        `,
+		hooks: {
+			postprocessRenderedBlock: ({ renderData, codeBlock }) => {
+				const lang = codeBlock.language.toUpperCase() || "PLAINTEXT";
+
+				const badge = h("div", { class: "lonetrail-badge" }, [
+					h("div", { class: "lonetrail-dots" }, [
+						h("div", { class: "lonetrail-dot lonetrail-dot-red" }),
+						h("div", { class: "lonetrail-dot lonetrail-dot-gold" }),
+						h("div", { class: "lonetrail-dot lonetrail-dot-teal" }),
+					]),
+					h("div", {
+						class: "h-3 w-[1px] bg-white/10 mx-1",
+					}),
+					h("span", { class: "lonetrail-protocol" }, [
+						"PRTCL // ",
+						h("span", { class: "lonetrail-lang" }, lang),
+					]),
+				]);
+
+				renderData.blockAst.children.unshift(badge);
+			},
+		},
+	};
 }

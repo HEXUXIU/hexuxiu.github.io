@@ -1,14 +1,5 @@
-/// <reference types="mdast" />
 import { h } from "hastscript";
 
-/**
- * Creates a GitHub Card component.
- *
- * @param {Object} properties - The properties of the component.
- * @param {string} properties.repo - The GitHub repository in the format "owner/repo".
- * @param {import('mdast').RootContent[]} children - The children elements of the component.
- * @returns {import('mdast').Parent} The created GitHub Card component.
- */
 export function GithubCardComponent(properties, children) {
 	if (Array.isArray(children) && children.length !== 0)
 		return h("div", { class: "hidden" }, [
@@ -23,7 +14,7 @@ export function GithubCardComponent(properties, children) {
 		);
 
 	const repo = properties.repo;
-	const cardUuid = `GC${Math.random().toString(36).slice(-6)}`; // Collisions are not important
+	const cardUuid = `GC${Math.random().toString(36).slice(-6)}`;
 
 	const nAvatar = h(`div#${cardUuid}-avatar`, { class: "gc-avatar" });
 	const nLanguage = h(

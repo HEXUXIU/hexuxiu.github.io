@@ -2,8 +2,11 @@ import type { AstroIntegration } from "@swup/astro";
 
 declare global {
 	interface Window {
-		// type from '@swup/astro' is incorrect
 		swup: AstroIntegration;
+		twikoo: {
+			init: (options: { envId: string; el: string; lang?: string }) => void;
+		};
+
 		pagefind: {
 			search: (query: string) => Promise<{
 				results: Array<{
@@ -13,7 +16,6 @@ declare global {
 		};
 	}
 }
-
 interface SearchResult {
 	url: string;
 	meta: {
@@ -38,4 +40,17 @@ interface SearchResult {
 	raw_content?: string;
 	raw_url?: string;
 	sub_results?: SearchResult[];
+}
+interface PagefindResultData {
+	url: string;
+	excerpt: string;
+	meta: {
+		title: string;
+		image?: string;
+	};
+	sub_results: Array<{
+		title: string;
+		url: string;
+		excerpt: string;
+	}>;
 }

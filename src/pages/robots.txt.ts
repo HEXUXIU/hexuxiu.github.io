@@ -1,12 +1,16 @@
+import { SITE_URL } from "@constants/site";
 import type { APIRoute } from "astro";
 
 const robotsTxt = `
 User-agent: *
-Disallow: /_astro/
-
-Sitemap: ${new URL("sitemap-index.xml", import.meta.env.SITE).href}
+Disallow: /favicon/
+Disallow: /audio/
+Disallow: /go/
+Disallow: /*?tag=*
+Disallow: /*?category=*
+Disallow: /*?uncategorized=*
+Sitemap: ${SITE_URL}sitemap-index.xml
 `.trim();
-
 export const GET: APIRoute = () => {
 	return new Response(robotsTxt, {
 		headers: {

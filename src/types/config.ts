@@ -1,25 +1,9 @@
 import type { AUTO_MODE, DARK_MODE, LIGHT_MODE } from "@constants/constants";
-
+import type I18nKey from "@i18n/i18nKey";
 export type SiteConfig = {
 	title: string;
 	subtitle: string;
-
-	lang:
-		| "en"
-		| "zh_CN"
-		| "zh_TW"
-		| "ja"
-		| "ko"
-		| "es"
-		| "th"
-		| "vi"
-		| "tr"
-		| "id";
-
-	themeColor: {
-		hue: number;
-		fixed: boolean;
-	};
+	lang: "en" | "zh_CN" | "ja" | "ko" | "es" | "th" | "vi" | "tr" | "id";
 	banner: {
 		enable: boolean;
 		src: string;
@@ -34,54 +18,50 @@ export type SiteConfig = {
 		enable: boolean;
 		depth: 1 | 2 | 3;
 	};
-
+	showPageViews?: boolean;
 	favicon: Favicon[];
 };
-
 export type Favicon = {
 	src: string;
 	theme?: "light" | "dark";
 	sizes?: string;
 };
-
 export enum LinkPreset {
 	Home = 0,
 	Archive = 1,
 	About = 2,
 }
-
 export type NavBarLink = {
 	name: string;
 	url: string;
 	external?: boolean;
+	/** Optional i18n key; when present the label is resolved per locale. */
+	labelKey?: I18nKey;
 };
-
 export type NavBarConfig = {
 	links: (NavBarLink | LinkPreset)[];
 };
-
 export type ProfileConfig = {
 	avatar?: string;
 	name: string;
 	bio?: string;
+	orcid?: string;
+	tags?: string[];
 	links: {
 		name: string;
 		url: string;
 		icon: string;
 	}[];
 };
-
 export type LicenseConfig = {
 	enable: boolean;
 	name: string;
 	url: string;
 };
-
 export type LIGHT_DARK_MODE =
 	| typeof LIGHT_MODE
 	| typeof DARK_MODE
 	| typeof AUTO_MODE;
-
 export type BlogPostData = {
 	body: string;
 	title: string;
@@ -96,7 +76,6 @@ export type BlogPostData = {
 	nextTitle?: string;
 	nextSlug?: string;
 };
-
 export type ExpressiveCodeConfig = {
 	theme: string;
 };

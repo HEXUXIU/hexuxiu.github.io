@@ -1,0 +1,90 @@
+---
+import { profileConfig } from "../../config";
+import { DEFAULT_LOCALE, type Locale } from "../../i18n/locales";
+import { getTagLabel } from "../../i18n/taxonomy";
+import { formatDate } from "../../utils/date-utils";
+import { StripeFooter } from "../ui/StripeFooter.tsx";
+
+interface Props {
+	title: string;
+	slug: string;
+	published: Date;
+	tags?: string[];
+	description?: string;
+	lang?: Locale;
+}
+
+const {
+	title,
+	published,
+	tags,
+	description,
+	lang = DEFAULT_LOCALE,
+} = Astro.props;
+
+const dateStr = formatDate(published).replace(/\//g, ".");
+---
+
+<header class="relative w-full max-w-[840px] bg-hero text-on-hero paper-texture shadow-2xl px-6 md:px-16 pt-8 pb-12 md:pt-10 md:pb-14 overflow-hidden flex-shrink-0">
+    <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+        <div
+            class="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-40"
+            data-parallax
+            style="background-image: url('/images/about-bg.webp'); filter: brightness(0.8) saturate(1.2) contrast(1.1); will-change: transform;"
+        ></div>
+        <div class="absolute inset-0 bg-gradient-to-br from-hero/90 via-hero/40 to-hero/90"></div>
+        <div class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[length:40px_40px]"></div>
+    </div>
+
+    <div class="absolute -top-4 -right-10 font-deco text-[180px] text-on-hero opacity-[0.03] pointer-events-none select-none uppercase">REPORT</div>
+
+    <div class="relative z-10 space-y-6">
+        <!-- Row 1: Report series + date -->
+        <div class="flex items-center justify-between">
+            <span class="font-deco text-[11px] font-bold text-on-hero/70 uppercase tracking-[0.3em]">
+                LONETRAIL Technical Note
+            </span>
+            <span class="font-date text-[12px] text-on-hero/50 uppercase tracking-[0.12em]">
+                {dateStr}
+            </span>
+        </div>
+
+        <!-- Title -->
+        <h1 class="post-title font-heading font-black text-[36px] md:text-[42px] leading-[1.1] tracking-tight text-on-hero uppercase">
+            {title}
+        </h1>
+
+        {description && (
+            <p class="font-cn text-[12px] md:text-[13px] text-on-hero/55 leading-relaxed">
+                {description}
+            </p>
+        )}
+
+        <div class="border-b-[2pt] border-white/15"></div>
+
+        <!-- Row 3: Author + Tags -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div class="flex items-center gap-4">
+                <div class="relative w-9 h-9 bg-white/5 border border-white/10 flex-shrink-0 overflow-hidden">
+                    <img src={profileConfig.avatar} alt={profileConfig.name} width="36" height="36" class="w-full h-full object-cover no-styling" />
+                </div>
+                <div class="flex flex-col">
+                    <div class="flex items-center gap-2">
+                        <span class="font-deco text-[11px] text-on-hero/60 uppercase tracking-widest">Author:</span>
+                        <span class="font-display text-[14px] text-on-hero leading-none uppercase font-bold">{profileConfig.name}</span>
+                    </div>
+                </div>
+            </div>
+            {tags && tags.length > 0 && (
+            <div class="flex items-center gap-2 flex-wrap">
+                <span class="font-deco text-[10px] text-on-hero/40 uppercase tracking-widest">Tags:</span>
+                {tags.map(tag => (
+                    <span class="px-2 py-0.5 text-[10px] font-deco border border-white/15 text-on-hero/50 rounded-sm uppercase tracking-widest">#{getTagLabel(tag, lang)}</span>
+                ))}
+            </div>
+            )}
+        </div>
+    </div>
+
+    <StripeFooter />
+</header>

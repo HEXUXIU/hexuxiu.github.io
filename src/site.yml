@@ -1,0 +1,62 @@
+site:
+  title: "贺煦修的博客"
+  title_en: "HEXUXIU's BLOG"
+  subtitle: "hi, 你好"
+  subtitle_en: "Hi, hello"
+  description: "HEXUXIU's personal blog"
+  description_en: "HEXUXIU's personal blog"
+  url: "https://blog.o0o.top"
+  lang: "zh_CN"
+  author: "贺煦修"
+  email: "hexuiu@gmail.com"
+  favicon: "/images/avatar.svg"
+  banner: "/images/bj.webp"
+  banner_credit: ""
+  banner_credit_url: ""
+  og_image: "/images/bj.webp"
+  avatar: "/images/avatar.svg"
+  version: "CEPATO_NEXT_v27.0"
+
+profile:
+  name: "贺煦修"
+  bio: "hi, 你好"
+  bio_en: "Hi, hello"
+  links:
+    - name: "GitHub"
+      icon: "fa6-brands:github"
+      url: "https://github.com/HEXUXIU"
+    - name: "RSS"
+      icon: "material-symbols:rss-feed"
+      url: "/rss.xml"
+    - name: "Email"
+      icon: "material-symbols:mail-outline-rounded"
+      url: "mailto:hexuiu@gmail.com"
+
+nav:
+  - key: home
+    url: "/"
+  - key: archive
+    url: "/archive/"
+  - key: series
+    url: "/seri/"
+  - key: essays
+    url: "/essays/"
+  - key: about
+    url: "/about/"
+
+taxonomy:
+  tags:
+    "技术": "Technology"
+    "随笔": "Essays"
+  categories:
+    "技术": "Technology"
+    "未分类": "Uncategorized"
+
+copyright:
+  site_name: "贺煦修的博客"
+  license: "CC BY-NC-SA 4.0"
+  license_url: "https://creativecommons.org/licenses/by-nc-sa/4.0/"
+
+trusted_domains:
+  - "lonetrail.pages.dev"
+  - "blog.o0o.top"

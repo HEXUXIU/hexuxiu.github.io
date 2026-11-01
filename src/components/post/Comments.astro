@@ -1,0 +1,16 @@
+---
+interface Props {
+	title?: string;
+}
+
+const { title = "Chapter_08 // Discussion" } = Astro.props;
+---
+<aside data-nosnippet aria-label="Comments">
+	<div class="flex items-center gap-2 mb-8">
+		<div class="w-[3px] h-[10px] bg-accent"></div>
+		<span class="text-[11px] font-deco tracking-[0.2em] font-semibold text-on-hero uppercase">{title}</span>
+	</div>
+	<div class="relative transition-all duration-300 min-h-[200px]" id="comments">
+		<slot />
+	</div>
+</aside>

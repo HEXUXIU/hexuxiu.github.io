@@ -1,163 +1,227 @@
-import sitemap from "@astrojs/sitemap";
-import svelte from "@astrojs/svelte";
-import tailwind from "@astrojs/tailwind";
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+import loadYaml from "js-yaml";
+import { unified } from "@astrojs/markdown-remark";
+import mdx from "@astrojs/mdx";
+import react from "@astrojs/react";
 import { pluginCollapsibleSections } from "@expressive-code/plugin-collapsible-sections";
 import { pluginLineNumbers } from "@expressive-code/plugin-line-numbers";
+import yaml from "@rollup/plugin-yaml";
 import swup from "@swup/astro";
+import { defineConfig, fontProviders } from "astro/config";
+import compress from "astro-compress";
 import expressiveCode from "astro-expressive-code";
 import icon from "astro-icon";
-import { defineConfig } from "astro/config";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
-import rehypeComponents from "rehype-components"; /* Render the custom directive content */
+import rehypeComponents from "rehype-components";
 import rehypeKatex from "rehype-katex";
+import rehypeRaw from "rehype-raw";
 import rehypeSlug from "rehype-slug";
-import remarkDirective from "remark-directive"; /* Handle directives */
+import remarkDirective from "remark-directive";
 import remarkGithubAdmonitionsToDirectives from "remark-github-admonitions-to-directives";
 import remarkMath from "remark-math";
 import remarkSectionize from "remark-sectionize";
-import { expressiveCodeConfig } from "./src/config.ts";
+import { pluginCustomCopyButton } from "./src/plugins/expressive-code/custom-copy-button.js";
 import { pluginLanguageBadge } from "./src/plugins/expressive-code/language-badge.ts";
 import { AdmonitionComponent } from "./src/plugins/rehype-component-admonition.mjs";
 import { GithubCardComponent } from "./src/plugins/rehype-component-github-card.mjs";
+import { rehypeExternalLinks } from "./src/plugins/rehype-external-links.js";
+import { rehypeImageDimensions } from "./src/plugins/rehype-image-dimensions.ts";
+import { rehypeOptimizeImages } from "./src/plugins/rehype-optimize-images.js";
+import { rehypePangu } from "./src/plugins/rehype-pangu.js";
+import { rehypeTableWrapper } from "./src/plugins/rehype-table-wrapper.js";
 import { parseDirectiveNode } from "./src/plugins/remark-directive-rehype.js";
-import { remarkExcerpt } from "./src/plugins/remark-excerpt.js";
+import { remarkMermaid } from "./src/plugins/remark-mermaid.mjs";
 import { remarkReadingTime } from "./src/plugins/remark-reading-time.mjs";
-import { pluginCustomCopyButton } from "./src/plugins/expressive-code/custom-copy-button.js";
 
-// https://astro.build/config
+const isCI = process.env.CI === "true";
+
+const siteYaml = loadYaml.load(
+	readFileSync(
+		join(dirname(fileURLToPath(import.meta.url)), "src/site.yml"),
+		"utf8",
+	),
+);
+const siteUrl = siteYaml.site.url.endsWith("/")
+	? siteYaml.site.url
+	: `${siteYaml.site.url}/`;
+const imageDomains = [
+	...new Set([new URL(siteUrl).hostname, ...(siteYaml.trusted_domains ?? [])]),
+];
+
 export default defineConfig({
-	site: "https://blog.O0O.top",
+	site: siteUrl,
 	base: "/",
 	trailingSlash: "always",
+	i18n: {
+		defaultLocale: "zh",
+		locales: ["zh", "en"],
+		// Missing English routes are rendered from the Chinese page so the
+		// language switch never 404s. Layout marks them noindex.
+		fallback: { en: "zh" },
+		routing: {
+			// Chinese stays at `/`, English lives under `/en/`.
+			prefixDefaultLocale: false,
+			// Any route that has no English page yet is rendered at its `/en/`
+			// address with the English UI shell (content stays as authored).
+			fallbackType: "rewrite",
+		},
+	},
+	experimental: {
+		collectionStorage: "chunked",
+	},
+	fonts: [
+		{
+			name: "Fira Code",
+			provider: fontProviders.fontsource("fira-code"),
+			cssVariable: "--font-mono-var",
+		},
+	],
+	image: {
+		domains: imageDomains,
+		format: ["webp"],
+		service: isCI
+			? { entrypoint: "astro/assets/services/sharp" }
+			: { entrypoint: "astro/assets/services/noop" },
+	},
 	integrations: [
-		tailwind({
-			nesting: true,
-		}),
+		react(),
+		icon({}),
 		swup({
-			theme: false,
-			animationClass: "transition-swup-", // see https://swup.js.org/options/#animationselector
-			// the default value `transition-` cause transition delay
-			// when the Tailwind class `transition-all` is used
-			containers: ["main", "#toc"],
-			smoothScrolling: true,
+			containers: ["#content-main"],
 			cache: true,
-			preload: true,
+			preload: { hover: true, visible: false },
 			accessibility: true,
-			updateHead: true,
-			updateBodyClass: false,
-			globalInstance: true,
-		}),
-		icon({
-			include: {
-				"preprocess: vitePreprocess(),": ["*"],
-				"fa6-brands": ["*"],
-				"fa6-regular": ["*"],
-				"fa6-solid": ["*"],
-			},
+			theme: false,
+			animationSelector: "#nonexistent",
+			updateHead: { persistAssets: true },
 		}),
 		expressiveCode({
-			themes: [expressiveCodeConfig.theme, expressiveCodeConfig.theme],
+			themes: ["github-dark"],
+			useVariableFonts: true,
 			plugins: [
 				pluginCollapsibleSections(),
 				pluginLineNumbers(),
 				pluginLanguageBadge(),
-				pluginCustomCopyButton()
+				pluginCustomCopyButton(),
 			],
 			defaultProps: {
-				wrap: true,
+				wrap: false,
+				showLineNumbers: true,
 				overridesByLang: {
-					'shellsession': {
+					shellsession: {
 						showLineNumbers: false,
 					},
 				},
 			},
 			styleOverrides: {
-				codeBackground: "var(--codeblock-bg)",
-				borderRadius: "0.75rem",
-				borderColor: "none",
-				codeFontSize: "0.875rem",
-				codeFontFamily: "'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
-				codeLineHeight: "1.5rem",
+				codeBackground: "#1A1814",
+				borderRadius: "0px",
+				borderColor: "rgba(255, 255, 255, 0.05)",
+				codeFontSize: "13px",
+				codeFontFamily:
+					"'Fira Code', 'Fira Code Variable', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
+				codeLineHeight: "1.7",
+				uiLineHeight: "1.7",
 				frames: {
-					editorBackground: "var(--codeblock-bg)",
-					terminalBackground: "var(--codeblock-bg)",
-					terminalTitlebarBackground: "var(--codeblock-topbar-bg)",
-					editorTabBarBackground: "var(--codeblock-topbar-bg)",
+					editorBackground: "#1A1814",
+					terminalBackground: "#1A1814",
+					terminalTitlebarBackground: "none",
+					editorTabBarBackground: "none",
 					editorActiveTabBackground: "none",
-					editorActiveTabIndicatorBottomColor: "var(--primary)",
+					editorActiveTabIndicatorBottomColor: "#D4621A",
 					editorActiveTabIndicatorTopColor: "none",
-					editorTabBarBorderBottomColor: "var(--codeblock-topbar-bg)",
-					terminalTitlebarBorderBottomColor: "none"
+					editorTabBarBorderBottomColor: "transparent",
+					terminalTitlebarBorderBottomColor: "transparent",
+					inlineButtonForeground: "transparent",
 				},
-				textMarkers: {
-					delHue: 0,
-					insHue: 180,
-					markHue: 250
-				}
 			},
 			frames: {
 				showCopyToClipboardButton: false,
-			}
+			},
 		}),
-        svelte(),
-		sitemap(),
+		compress({
+			CSS: false,
+			HTML: false,
+			Image: false,
+			JavaScript: true,
+			SVG: true,
+			Logger: 1,
+		}),
+		mdx(),
 	],
 	markdown: {
-		remarkPlugins: [
-			remarkMath,
-			remarkReadingTime,
-			remarkExcerpt,
-			remarkGithubAdmonitionsToDirectives,
-			remarkDirective,
-			remarkSectionize,
-			parseDirectiveNode,
-		],
-		rehypePlugins: [
-			rehypeKatex,
-			rehypeSlug,
-			[
-				rehypeComponents,
-				{
-					components: {
-						github: GithubCardComponent,
-						note: (x, y) => AdmonitionComponent(x, y, "note"),
-						tip: (x, y) => AdmonitionComponent(x, y, "tip"),
-						important: (x, y) => AdmonitionComponent(x, y, "important"),
-						caution: (x, y) => AdmonitionComponent(x, y, "caution"),
-						warning: (x, y) => AdmonitionComponent(x, y, "warning"),
-					},
-				},
+		processor: unified({
+			remarkPlugins: [
+				remarkMermaid,
+				remarkMath,
+				remarkReadingTime,
+				remarkGithubAdmonitionsToDirectives,
+				remarkDirective,
+				remarkSectionize,
+				parseDirectiveNode,
 			],
-			[
-				rehypeAutolinkHeadings,
-				{
-					behavior: "append",
-					properties: {
-						className: ["anchor"],
-					},
-					content: {
-						type: "element",
-						tagName: "span",
-						properties: {
-							className: ["anchor-icon"],
-							"data-pagefind-ignore": true,
+			rehypePlugins: [
+				rehypeRaw,
+				rehypePangu,
+				rehypeImageDimensions,
+				rehypeKatex,
+				rehypeSlug,
+				rehypeOptimizeImages,
+				[rehypeExternalLinks, { domains: imageDomains }],
+				rehypeTableWrapper,
+				[
+					rehypeComponents,
+					{
+						components: {
+							github: GithubCardComponent,
+							note: (x, y) => AdmonitionComponent(x, y, "note"),
+							tip: (x, y) => AdmonitionComponent(x, y, "tip"),
+							important: (x, y) => AdmonitionComponent(x, y, "important"),
+							caution: (x, y) => AdmonitionComponent(x, y, "caution"),
+							warning: (x, y) => AdmonitionComponent(x, y, "warning"),
+							red: (x, y) => AdmonitionComponent(x, y, "caution"),
+							blue: (x, y) => AdmonitionComponent(x, y, "note"),
+							green: (x, y) => AdmonitionComponent(x, y, "tip"),
+							yellow: (x, y) => AdmonitionComponent(x, y, "warning"),
+							cyan: (x, y) => AdmonitionComponent(x, y, "important"),
 						},
-						children: [
-							{
-								type: "text",
-								value: "#",
-							},
-						],
 					},
-				},
+				],
+				[
+					rehypeAutolinkHeadings,
+					{
+						behavior: "append",
+						properties: {
+							className: ["anchor"],
+						},
+						content: {
+							type: "element",
+							tagName: "span",
+							properties: {
+								className: ["anchor-icon"],
+								"data-pagefind-ignore": true,
+							},
+							children: [
+								{
+									type: "text",
+									value: "#",
+								},
+							],
+						},
+					},
+				],
 			],
-		],
+		}),
 	},
 	vite: {
+		plugins: [yaml()],
 		build: {
+			cssCodeSplit: true,
 			rollupOptions: {
+				external: ["/pagefind/pagefind.js"],
 				onwarn(warning, warn) {
-					// temporarily suppress this warning
 					if (
 						warning.message.includes("is dynamically imported by") &&
 						warning.message.includes("but also statically imported by")
@@ -166,6 +230,12 @@ export default defineConfig({
 					}
 					warn(warning);
 				},
+			},
+		},
+
+		server: {
+			watch: {
+				ignored: ["**/*.bak", "**/*.bak.*"],
 			},
 		},
 	},

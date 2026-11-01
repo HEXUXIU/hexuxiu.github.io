@@ -1,38 +1,150 @@
 import Key from "../i18nKey";
 import type { Translation } from "../translation";
-
 export const en: Translation = {
 	[Key.home]: "Home",
 	[Key.about]: "About",
 	[Key.archive]: "Archive",
 	[Key.search]: "Search",
-
 	[Key.tags]: "Tags",
 	[Key.categories]: "Categories",
 	[Key.recentPosts]: "Recent Posts",
-
 	[Key.comments]: "Comments",
-
 	[Key.untitled]: "Untitled",
 	[Key.uncategorized]: "Uncategorized",
 	[Key.noTags]: "No Tags",
-
 	[Key.wordCount]: "word",
 	[Key.wordsCount]: "words",
 	[Key.minuteCount]: "minute",
 	[Key.minutesCount]: "minutes",
 	[Key.postCount]: "post",
 	[Key.postsCount]: "posts",
-
 	[Key.themeColor]: "Theme Color",
-
 	[Key.lightMode]: "Light",
 	[Key.darkMode]: "Dark",
 	[Key.systemMode]: "System",
-
 	[Key.more]: "More",
-
+	[Key.viewAll]: "View All",
 	[Key.author]: "Author",
 	[Key.publishedAt]: "Published at",
 	[Key.license]: "License",
+	[Key.views]: "views",
+	[Key.seriesIncluded]: "Series Included",
+	[Key.seriesDescription]:
+		"This article is included in a featured series. Visit the project page to explore the full collection.",
+	[Key.copyTitle]: "Title",
+	[Key.copyDate]: "Date",
+	[Key.copyLicense]: "License",
+	[Key.copied]: "Copied",
+	[Key.follow]: "Follow",
+	[Key.poweredBy]: "Powered by",
+	[Key.subscribe]: "Subscribe",
+	[Key.seriesLabel]: "Series Entry",
+	[Key.seriesOpen]: "Open Dossier",
+	[Key.series]: "Series",
+	[Key.essays]: "Essay",
+	[Key.links]: "Portal",
+	[Key.notFound]: "Not Found",
+	[Key.notFoundDesc]:
+		"The requested page could not be located. Please check the URL for errors.",
+	[Key.returnHome]: "Return to Home",
+	[Key.redirectConfirm]: "Confirm Redirect",
+	[Key.redirectWarning]:
+		"You are leaving this site. Please confirm that the destination link is safe.",
+	[Key.loading]: "Loading...",
+	[Key.invalidParams]: "Invalid Link",
+	[Key.subscribeDesc]:
+		"Subscribe via RSS to receive notifications when new posts are published.",
+	[Key.exchangeLinks]: "Exchange Links",
+	[Key.noDescription]: "No description",
+
+	[Key.navSeries]: "Series",
+	[Key.navEssays]: "Essays",
+	[Key.navLinks]: "Portal",
+	[Key.siteLinks]: "Links",
+	[Key.navDonate]: "Donate",
+	[Key.language]: "Language",
+	[Key.switchToEnglish]: "Switch to English",
+	[Key.switchToChinese]: "Switch to Chinese",
+	[Key.searchPlaceholder]: "Search posts...",
+	[Key.searchHint]: "Type a keyword to search",
+	[Key.searchEmpty]: "Open search anytime",
+	[Key.searchNoResults]: "No results found",
+	[Key.searching]: "Searching...",
+	[Key.searchResults]: "results",
+	[Key.closeSearch]: "Close search",
+
+	[Key.readMore]: "Read more",
+	[Key.view]: "View",
+	[Key.share]: "Share",
+	[Key.commentsAria]: "View comments",
+	[Key.stream]: "Stream",
+	[Key.blogArchive]: "Blog archive",
+	[Key.otherSections]: "Other sections",
+	[Key.pinned]: "Pinned",
+	[Key.latestEssays]: "Latest essays",
+	[Key.allEssays]: "All essays",
+	[Key.network]: "Network",
+	[Key.allPosts]: "All posts",
+	[Key.essaysIntro]:
+		"Short thoughts and daily notes that never became full articles, grouped by month.",
+	[Key.essaysPageOf]: "Page {current} / {total}",
+	[Key.noEntries]: "No entries in this sector.",
+	[Key.postsLabel]: "Posts",
+	[Key.categoriesLabel]: "Categories",
+	[Key.tagsLabel]: "Tags",
+	[Key.recordsIndexed]: "records indexed",
+	[Key.pageLabel]: "Page {page}",
+	[Key.homeIntro]:
+		"Coffee, code and night. A table for thoughts beyond the information flood.",
+
+	[Key.subscribeTitle]: "Subscribe",
+	[Key.subscribeIntro]:
+		"Subscribe to new posts via RSS/Atom. Works with Follow, Feedly, Inoreader and most readers.",
+	[Key.copy]: "Copy",
+	[Key.copyMarkdown]: "Copy Markdown",
+	[Key.emailRequest]: "Request via email",
+
+	[Key.heatmapLess]: "Less",
+	[Key.heatmapMore]: "More",
+	[Key.heatmapNone]: "Nothing published",
+	[Key.heatmapCount]: "{count} entries",
+	[Key.tagline]: "Ad astra per aspera.",
+	[Key.openNav]: "Open navigation",
+	[Key.homeLink]: "Home",
+	[Key.followRss]: "Subscribe via RSS",
+	[Key.toggleTheme]: "Toggle theme",
+	[Key.settings]: "Settings",
+	[Key.theme]: "Theme",
+
+	[Key.seriesDirectory]: "Series directory",
+	[Key.chapters]: "Chapters",
+	[Key.noSeries]: "No series initialized in this sector.",
+	[Key.noChapters]: "No records associated with this dossier.",
+	[Key.donateAfdianDesc]:
+		"Monthly support in any amount, with an optional message",
+	[Key.donateGo]: "Support now",
+	[Key.chainsCount]: "{count} chains",
+	[Key.cryptoIntro]:
+		"Receive addresses for each chain are listed below. Click “Copy address”, then paste it into your wallet.",
+	[Key.copyAddress]: "Copy address",
+	[Key.blockExplorer]: "Block explorer",
+	[Key.cryptoWarning]:
+		"Addresses are long. After copying, verify the first and last characters in your wallet. “Block explorer” opens the corresponding public chain page.",
+	[Key.subscribeLines]: "{count} lines",
+	[Key.subscribePreview]:
+		"Preview of the first {shown} lines · {total} lines total ·",
+	[Key.subscribeViewFull]: "View full file →",
+	[Key.subscribeFooter]:
+		"Copy the URL above into your RSS reader to subscribe. Works with Follow, Feedly, Inoreader, NetNewsWire and most readers.",
+	[Key.feedFile]: "Full file",
+	[Key.linkSiteName]: "Site name",
+	[Key.linkSiteUrl]: "Site URL",
+	[Key.linkSiteDesc]: "Description",
+	[Key.linkAvatar]: "Avatar URL",
+	[Key.linkApply]:
+		"Apply via the comments below or by email. Please add this site to your links first.",
+	[Key.searchShortcutHint]: "Or try the search, shortcut",
+	[Key.viewFullAbout]: "View full about page",
+	[Key.goBack]: "Go back",
+	[Key.goContinue]: "Continue",
 };

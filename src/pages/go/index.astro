@@ -1,0 +1,76 @@
+---
+import Button from "../../components/ui/Button";
+import { StripeFooter } from "../../components/ui/StripeFooter.tsx";
+import I18nKey from "../../i18n/i18nKey";
+import { resolveLocale } from "../../i18n/locales";
+import { i18n } from "../../i18n/translation";
+import Layout from "../../layouts/Layout.astro";
+
+const locale = resolveLocale(Astro.currentLocale, Astro.url.pathname);
+const t = (key: I18nKey) => i18n(key, locale);
+---
+<Layout title={t(I18nKey.redirectConfirm)} noindex>
+    <div class="w-full max-w-[840px]" style="filter: drop-shadow(0 8px 30px rgba(0,0,0,0.3));">
+        <header class="relative px-6 md:px-16 py-10 md:py-12 overflow-hidden">
+            <img src="/images/backend.webp" alt="" class="absolute inset-0 w-full h-full object-cover z-0" loading="eager" decoding="async" />
+            <div class="absolute inset-0 bg-black/60 z-[1]"></div>
+            <div class="absolute -top-1 -left-1 w-3 h-3 border-t border-l border-on-hero/40 z-20"></div>
+            <div class="absolute -top-1 -right-1 w-3 h-3 border-t border-r border-on-hero/40 z-20"></div>
+            <div class="absolute -bottom-1 -left-1 w-3 h-3 border-b border-l border-on-hero/40 z-20"></div>
+            <div class="absolute -bottom-1 -right-1 w-3 h-3 border-b border-r border-on-hero/40 z-20"></div>
+            <div class="absolute inset-0 paper-texture opacity-30 pointer-events-none z-[2]"></div>
+
+            <div class="relative z-10 flex justify-between items-center mb-10 md:mb-12">
+                <div class="flex items-center gap-3">
+                    <div class="w-[3px] h-[10px] bg-accent"></div>
+                    <span class="font-deco text-[10px] md:text-[11px] font-bold tracking-[0.2em] uppercase text-on-hero/70">
+                        System // Interstitial_Link
+                    </span>
+                </div>
+            </div>
+
+            <div class="relative z-10">
+                <div class="absolute -top-4 md:-top-10 -right-8 md:-right-20 pointer-events-none select-none">
+                    <span class="font-deco text-[32px] md:text-[120px] text-on-hero opacity-[0.03] leading-none uppercase whitespace-nowrap">
+                        SECURITY
+                    </span>
+                </div>
+
+                <h1 class="font-heading text-[38px] md:text-[64px] leading-[1.1] md:leading-[0.85] tracking-tight md:tracking-tighter text-on-hero font-black mb-6 uppercase">{t(I18nKey.redirectConfirm)}</h1>
+
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 pt-6 border-t border-on-hero/10">
+                    <p class="font-cn text-[11px] text-on-hero/40 tracking-[0.2em]">
+                        {t(I18nKey.tagline)}
+                    </p>
+                </div>
+            </div>
+
+            <StripeFooter />
+        </header>
+    </div>
+
+    <main class="relative w-full max-w-[840px] bg-page paper-texture shadow-2xl px-6 md:px-16 py-10 md:py-12 overflow-hidden">
+        <div class="space-y-6">
+            <div class="flex items-center gap-3">
+                <h2 class="text-[11px] font-black text-secondary uppercase tracking-[0.3em]">01 // Request_Summary</h2>
+                <div class="flex-1 h-[1px] bg-border"></div>
+            </div>
+            <p class="font-cn text-[16px] leading-[1.8] text-primary font-medium max-w-2xl">
+                {t(I18nKey.redirectWarning)}
+            </p>
+        </div>
+
+        <div class="bg-hover border border-border p-6 mt-8 relative">
+            <span class="absolute top-0 right-2 text-[9px] text-hint uppercase tracking-widest font-bold">Target_URI</span>
+            <div id="target-url" data-invalid={t(I18nKey.invalidParams)} class="font-mono text-[14px] md:text-[16px] text-primary break-all leading-relaxed font-bold">{t(I18nKey.loading)}</div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 pt-10">
+            <Button id="cancel-btn" variant="unstyled" className="border border-primary text-primary text-[11px] font-bold uppercase tracking-[0.3em] py-5 text-center hover:bg-hover transition-all">{t(I18nKey.goBack)}</Button>
+            <Button as="a" id="continue-link" href="#" variant="unstyled" className="bg-hero text-on-hero text-[11px] font-bold uppercase tracking-[0.3em] py-5 text-center hover:bg-secondary transition-all">
+                {t(I18nKey.goContinue)}
+            </Button>
+        </div>
+    </main>
+
+</Layout>

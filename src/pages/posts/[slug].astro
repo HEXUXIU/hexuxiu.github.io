@@ -1,0 +1,16 @@
+---
+import { getSortedPosts } from "@utils/content-utils";
+import PostPage from "../../components/pages/PostPage.astro";
+
+export async function getStaticPaths() {
+	const posts = await getSortedPosts("zh");
+	return posts.map((entry) => ({
+		params: { slug: entry.slug },
+		props: { entry, posts },
+	}));
+}
+
+const { entry, posts } = Astro.props;
+---
+
+<PostPage entry={entry} posts={posts} />
