@@ -1,0 +1,554 @@
+#!/usr/bin/env python3
+"""Per-page Glow Sans SC subsets (round 3, item 1).
+
+Round 2 shipped one subset per weight covering the whole site's 1159
+characters (public/fonts/subset/GlowSansSC-<weight>.woff2). But a single
+page only uses ~90-600 of them, so every page downloads ~100-170KB per
+weight it never needs. This script, run as a post-build step after
+`astro build` (and after prune-font-face.mjs), cuts one subset per page:
+
+  dist/fonts/pages/<slug>/GlowSansSC-<weight>.woff2
+  dist/fonts/pages/<slug>/fonts.css   (4 @font-face rules, same family /
+  weight / style / display / size-adjust as src/styles/fonts.css)
+
+and injects a <link> to the per-page CSS right after the Layout CSS
+<link> in that page's HTML. The per-page @font-face rules come later in
+document order than the global ones in Layout CSS, so for the same
+family + weight the browser uses the per-page file (verified with a
+headless-Chrome network log, not assumed).
+
+What each page's subset contains:
+  * every character in that page's rendered HTML (text + attributes,
+    same feed as scripts/check-font-coverage.mjs),
+  * the site-wide dynamic-UI characters: characters in the global
+    charset that appear in no page's HTML (search overlay strings,
+    JS-rendered UI text from src). These are needed because the search
+    overlay is part of every page.
+  * on pages that render Twikoo comments (#twikoo-comment in the HTML),
+    a best-effort set of common zh-CN comment-UI characters. Twikoo's
+    strings are served from its cloud backend at runtime and cannot be
+    enumerated statically; characters outside this set fall back to the
+    system font exactly as they already did under the round-2 global
+    subsets. Comment *content* was never covered and still isn't.
+
+Deliberately NOT covered: search-result excerpts. Those come from any
+page on the site, so they can contain characters outside the current
+page's subset; such glyphs fall back to the system font inside the
+search overlay only. (Making the overlay use the site-wide subset
+on demand is part of the round-3 SearchPanel rewrite, item 2.)
+
+unicode-range: this script also patches the site-wide @font-face rules
+in the built Layout CSS, adding a unicode-range that lists exactly the
+codepoints each subset file contains (global charset intersected with
+that weight's cmap -- emoji and other non-renderable charset entries
+are excluded). Without it, a character missing from every loaded face
+-- e.g. the footer's "Copyright ©", where U+00A9 is in no subset file
+and not in Futura PT either -- forces the browser to DOWNLOAD the
+site-wide subset just to check whether it contains the glyph. With
+unicode-range the browser skips the face without fetching it, so the
+global file is only ever downloaded for characters it actually holds
+(e.g. search excerpts). Final rendering is unchanged: such characters
+already fell back to the system font; only the wasted download goes.
+The per-page rules deliberately carry no unicode-range: their file is
+downloaded for the page's own characters anyway, so there is nothing
+further to save, and an uncovered character still falls through to the
+site-wide face exactly as before.
+
+Self-verification (fails the build loudly on any problem):
+  * every page character the upstream font can render is present in
+    that page's subset cmap;
+  * every glyph in a per-page subset is byte-identical (CFF CharString)
+    to the same glyph in the global subset, with a RecordingPen outline
+    comparison as fallback -- subsetting must never change a glyph's
+    shape, only drop unneeded glyphs;
+  * every dist HTML page got its per-page <link> injected.
+
+Regeneration: everything is derived from dist/ + the global subsets at
+build time, so a new post (new characters) is picked up automatically
+on the next build; no manual step. If the global charset itself grows,
+run python3 scripts/regen-font-subsets.py first (as before).
+
+Requires: python3 + fontTools + brotli (same as regen-font-subsets.py).
+On Cloudflare Pages the build command pip-installs them first.
+Nothing in this script runs in the browser.
+"""
+import json
+import multiprocessing as mp
+import os
+import re
+import sys
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DIST = os.path.join(ROOT, "dist")
+GLOBAL_DIR = os.path.join(ROOT, "public", "fonts", "subset")
+CHARSET_JSON = os.path.join(ROOT, "scripts", "font-subset-charset.json")
+OUT_BASE = os.path.join(DIST, "fonts", "pages")
+WEIGHTS = (400, 500, 700, 900)
+
+# Best-effort common zh-CN Twikoo comment-UI characters (labels, buttons,
+# placeholders, relative-time words). Twikoo's strings come from its cloud
+# backend at runtime, so this set is intentionally small and approximate;
+# anything outside it falls back to the system font, as before.
+TWIKOO_UI_CHARS = (
+    "评论发表昵称邮箱网址输入内容发送预览取消回复加载更多没有删除置顶"
+    "登录匿名表情支持踩赞同反对举报管理头像时间刚刚分钟小时天前月年楼"
+    "主博主你的请先后再试一次失败成功已评第条共页确定关闭清空上传图片"
+)
+
+FONT_FACE_TEMPLATE = """/* Per-page Glow Sans SC subsets -- generated by
+   scripts/per-page-font-subsets.py at build time. Same typeface, same
+   glyphs as the site-wide subsets; only the character set differs. */
+@font-face {{
+  font-family: "Glow Sans SC";
+  src: local("Glow Sans SC"), url("/fonts/pages/{slug}/GlowSansSC-{w}.woff2") format("woff2");
+  font-weight: {w};
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 92%;
+}}
+"""
+
+
+def unicode_range(cps):
+    """Minimal CSS unicode-range list for a sorted iterable of codepoints:
+    consecutive runs become U+XXXX-YYYY, singles become U+XXXX."""
+    cps = sorted(cps)
+    if not cps:
+        return ""
+    ranges = []
+    start = prev = cps[0]
+    for cp in cps[1:]:
+        if cp == prev + 1:
+            prev = cp
+        else:
+            ranges.append((start, prev))
+            start = prev = cp
+    ranges.append((start, prev))
+    return ", ".join(
+        f"U+{a:04X}" if a == b else f"U+{a:04X}-{b:04X}" for a, b in ranges
+    )
+
+
+def patch_global_unicode_ranges(global_charset, global_data):
+    """Insert unicode-range into the 4 site-wide Glow @font-face rules in
+    the built Layout CSS (dist/_astro/Layout.*.css), one range list per
+    weight: the codepoints that weight's subset file actually contains.
+    Returns the number of rules patched (must be 4)."""
+    import glob as globmod
+
+    css_files = globmod.glob(os.path.join(DIST, "_astro", "Layout.*.css"))
+    if len(css_files) != 1:
+        raise SystemExit(
+            f"[per-page-font-subsets] FAIL: expected 1 Layout CSS, "
+            f"found {len(css_files)}"
+        )
+    css_path = css_files[0]
+    css = open(css_path, encoding="utf-8").read()
+    patched = 0
+    for w in WEIGHTS:
+        _, g_cmap, _ = global_data[w]
+        ranges = unicode_range(c for c in global_charset if c in g_cmap)
+        # Minified block: ...url(/fonts/subset/GlowSansSC-<w>.woff2)
+        # format("woff2");font-weight:<w>;...;size-adjust:92%}
+        pattern = re.compile(
+            r"(@font-face\{font-family:Glow Sans SC;src:local\(Glow Sans SC\),"
+            rf"url\(/fonts/subset/GlowSansSC-{w}\.woff2\)format\(\"woff2\"\);"
+            rf"font-weight:{w};font-style:normal;font-display:swap;"
+            r"size-adjust:92%\})"
+        )
+        m = pattern.search(css)
+        if not m:
+            raise SystemExit(
+                f"[per-page-font-subsets] FAIL: global Glow {w} @font-face "
+                "block not found in Layout CSS"
+            )
+        block = m.group(1)
+        if "unicode-range:" in block:
+            # Re-run on an already-patched dist: leave it alone.
+            patched += 1
+            continue
+        new_block = block[:-1] + f";unicode-range:{ranges}}}"
+        css = css[: m.start()] + new_block + css[m.end() :]
+        patched += 1
+    with open(css_path, "w", encoding="utf-8") as f:
+        f.write(css)
+    print(
+        f"[per-page-font-subsets] patched {patched}/4 global @font-face "
+        "rules with unicode-range"
+    )
+    return patched
+
+
+def slug_for(relpath):
+    # ASCII-only slug + short hash of the full path, so the per-page font
+    # URL never contains non-ASCII characters (e.g. categories/技术).
+    # posts/edgeone-part1/index.html -> posts-edgeone-part1-<hash6>
+    # index.html -> home-<hash6>
+    import hashlib
+
+    p = relpath.replace(os.sep, "/")
+    if p.endswith("/index.html"):
+        p = p[: -len("/index.html")]
+    elif p.endswith(".html"):
+        p = p[: -len(".html")]
+    base = re.sub(r"[^a-z0-9]+", "-", p.lower()).strip("-") or "home"
+    digest = hashlib.md5(relpath.encode("utf-8")).hexdigest()[:6]
+    return f"{base}-{digest}"
+
+
+def charset_of_html(html):
+    import html as htmlmod
+
+    t = re.sub(r"<script[\s\S]*?</script>", " ", html)
+    t = re.sub(r"<style[\s\S]*?</style>", " ", t)
+    t = re.sub(
+        r"<[^>]+>",
+        lambda m: " "
+        + " ".join(
+            x
+            for x in re.findall(r'"([^"]*)"|\'([^\']*)\'', m.group(0))
+            for x in x
+            if x
+        )
+        + " ",
+        t,
+    )
+    # Decode HTML entities AFTER tag stripping (unescaping first would
+    # turn &lt;/&gt; in code samples into fake tags and lose characters).
+    # This matters: the footer renders "Copyright © 2025–2026" from
+    # &copy;/&ndash; entities, and those decoded codepoints are real
+    # rendered text. Without this, a page whose only en-dash comes from
+    # &ndash; gets a subset without U+2013, and the browser falls back to
+    # the site-wide subset file for that glyph -- downloading the global
+    # file the per-page subset was meant to replace.
+    t = htmlmod.unescape(t)
+    return set(map(ord, t))
+
+
+def collect_pages():
+    pages = []
+    for dirpath, dirnames, files in os.walk(DIST):
+        dirnames[:] = [d for d in dirnames if d not in ("pagefind",)]
+        for fn in files:
+            if fn.endswith(".html"):
+                full = os.path.join(dirpath, fn)
+                rel = os.path.relpath(full, DIST)
+                pages.append((full, rel))
+    pages.sort()
+    return pages
+
+
+def subset_one(job):
+    """Worker: subset one (slug, weight). Returns (slug, weight, out_path, size).
+
+    fontTools < 4.68 hits a CFF subroutine-pruning bug when re-subsetting
+    an already-subset font; for those versions subset with
+    --desubroutinize (inlines subroutines; outlines unchanged, verified
+    by verify_page). On >= 4.68 try the normal path first and only fall
+    back to desubroutinize if it raises.
+    """
+    slug, weight, text, out_path = job
+    import fontTools
+    from fontTools import subset
+
+    parts = fontTools.version.split(".")
+    old = (int(parts[0]), int(parts[1])) < (4, 68)
+    src = os.path.join(GLOBAL_DIR, f"GlowSansSC-{weight}.woff2")
+    attempts = [True] if old else [False, True]
+    last_err = None
+    for desub in attempts:
+        try:
+            options = subset.Options()
+            options.flavor = "woff2"
+            options.desubroutinize = desub
+            font = subset.load_font(src, options)
+            ss = subset.Subsetter(options)
+            ss.populate(text=text)
+            ss.subset(font)
+            os.makedirs(os.path.dirname(out_path), exist_ok=True)
+            font.save(out_path)
+            return (slug, weight, out_path, os.path.getsize(out_path))
+        except Exception as e:  # noqa: BLE001 - retry with desubroutinize
+            last_err = e
+            continue
+    raise last_err
+
+
+def glyph_charstrings(font):
+    """Return {glyph_name: charstring bytecode} for a CFF font."""
+    cff = font["CFF "].cff
+    top = cff.topDictIndex[0]
+    cs = top.CharStrings
+    out = {}
+    for name in cs.keys():
+        try:
+            out[name] = cs[name].bytecode
+        except Exception:
+            out[name] = None
+    return out
+
+
+def outlines_equal(font_a, font_b, glyph_name):
+    from fontTools.pens.recordingPen import RecordingPen
+
+    def record(font):
+        glyphset = font.getGlyphSet()
+        pen = RecordingPen()
+        glyphset[glyph_name].draw(pen)
+        return pen.value
+
+    return record(font_a) == record(font_b)
+
+
+def verify_page(slug, charset, global_data):
+    """Check per-page subsets cover the charset and glyphs are identical
+    to the global subsets. global_data maps weight -> (TTFont, cmap,
+    charstrings dict), built once by the caller. Returns (ok, problems
+    list, sizes dict)."""
+    from fontTools.ttLib import TTFont
+
+    problems = []
+    sizes = {}
+    page_dir = os.path.join(OUT_BASE, slug)
+    for w in WEIGHTS:
+        path = os.path.join(page_dir, f"GlowSansSC-{w}.woff2")
+        if not os.path.exists(path):
+            problems.append(f"{slug} w{w}: subset file missing")
+            continue
+        sizes[w] = os.path.getsize(path)
+        sub = TTFont(path)
+        sub_cmap = sub.getBestCmap()
+        gfont, g_cmap, g_cs = global_data[w]
+        # 1. coverage: every page char renderable by the global font must
+        #    be in the per-page subset.
+        missing = [c for c in charset if c in g_cmap and c not in sub_cmap]
+        if missing:
+            problems.append(
+                f"{slug} w{w}: subset missing "
+                + " ".join(f"U+{c:04X}" for c in sorted(missing)[:10])
+            )
+        # 2. glyph identity: same CharString bytes as the global subset,
+        #    RecordingPen outline comparison as fallback.
+        sub_cs = glyph_charstrings(sub)
+        for c in charset:
+            if c not in g_cmap or c not in sub_cmap:
+                continue
+            gname = g_cmap[c]
+            sname = sub_cmap[c]
+            if gname == sname and sub_cs.get(sname) == g_cs.get(gname):
+                continue
+            if not outlines_equal(gfont, sub, sname):
+                problems.append(
+                    f"{slug} w{w}: glyph changed for U+{c:04X} ({sname})"
+                )
+                break
+        sub.close()
+    return (not problems, problems, sizes)
+
+
+def ensure_fonttools():
+    """fontTools + brotli are build-time deps. If missing (e.g. a fresh
+    Cloudflare Pages build image), install them; fail loudly if that
+    fails instead of silently shipping the global subsets.
+
+    Version note: fontTools < 4.68 has a CFF subroutine-pruning bug that
+    breaks re-subsetting an already-subset CFF font
+    (AttributeError: 'NoneType' object has no attribute '_used').
+    If the installed version is older, try upgrading; if the upgrade
+    fails, subset_one() falls back to --desubroutinize (the same
+    workaround scripts/regen-font-subsets.py documents), so the build
+    still succeeds.
+    """
+    import subprocess
+
+    def _version():
+        try:
+            import fontTools
+
+            parts = fontTools.version.split(".")
+            return (int(parts[0]), int(parts[1]))
+        except Exception:
+            return None
+
+    def _usable():
+        try:
+            import brotli  # noqa: F401
+            import fontTools  # noqa: F401
+
+            return True
+        except ImportError:
+            return False
+
+    if _usable() and (_version() or (0, 0)) >= (4, 68):
+        return
+    print("[per-page-font-subsets] installing/upgrading fontTools + brotli...")
+    r = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "pip",
+            "install",
+            "--quiet",
+            "--disable-pip-version-check",
+            "--break-system-packages",
+            "fonttools>=4.68",
+            "brotli",
+        ]
+    )
+    if not _usable():
+        raise SystemExit(
+            "[per-page-font-subsets] FAIL: fontTools/brotli missing and "
+            f"pip install failed (rc={r.returncode}); install them and rebuild."
+        )
+    if (_version() or (0, 0)) < (4, 68):
+        print(
+            "[per-page-font-subsets] fontTools still < 4.68 "
+            f"({_version()}); using --desubroutinize fallback"
+        )
+
+
+def main():
+    ensure_fonttools()
+    global_charset = set(
+        json.load(open(CHARSET_JSON, encoding="utf-8"))
+    )
+    if len(global_charset) < 100:
+        raise SystemExit("[per-page-font-subsets] charset file implausibly small")
+
+    pages = collect_pages()
+    if not pages:
+        raise SystemExit("[per-page-font-subsets] no HTML pages found in dist/")
+
+    # Per-page charsets + the union (for the dynamic-UI set).
+    page_charsets = {}
+    union = set()
+    for full, rel in pages:
+        with open(full, encoding="utf-8", errors="ignore") as f:
+            html = f.read()
+        cs = charset_of_html(html)
+        page_charsets[rel] = (cs, html)
+        union |= cs
+    dynamic_ui = sorted(global_charset - union)
+    print(
+        f"[per-page-font-subsets] {len(pages)} pages, "
+        f"{len(dynamic_ui)} dynamic-UI chars added to every page"
+    )
+
+    # Build subset jobs.
+    jobs = []
+    page_meta = {}
+    for full, rel in pages:
+        cs, html = page_charsets[rel]
+        slug = slug_for(rel)
+        chars = sorted(cs | set(dynamic_ui))
+        # Pages that mount the Twikoo island (PostPage + essays/[slug]).
+        # Detected by path, not by HTML: the island renders nothing while
+        # integrationConfig.twikoo.envId is empty, so #twikoo-comment is
+        # absent from the HTML even on post pages. If envId is ever set,
+        # the comment UI renders on exactly these pages.
+        is_comment_page = rel.startswith(("posts/", "essays/"))
+        if is_comment_page:
+            chars = sorted(set(chars) | set(map(ord, TWIKOO_UI_CHARS)))
+            page_meta[rel] = (slug, True)
+        else:
+            page_meta[rel] = (slug, False)
+        text = "".join(chr(c) for c in chars)
+        for w in WEIGHTS:
+            out = os.path.join(OUT_BASE, slug, f"GlowSansSC-{w}.woff2")
+            jobs.append((slug, w, text, out))
+        page_meta[rel] = (slug, page_meta[rel][1], len(chars))
+
+    workers = max(1, min(4, os.cpu_count() or 1))
+    print(
+        f"[per-page-font-subsets] subsetting {len(jobs)} files "
+        f"({len(pages)} pages x {len(WEIGHTS)} weights, {workers} workers)..."
+    )
+    with mp.Pool(workers) as pool:
+        results = pool.map(subset_one, jobs)
+    print(f"[per-page-font-subsets] wrote {len(results)} subset files")
+
+    # Write per-page fonts.css + inject the <link> into each page.
+    from fontTools.ttLib import TTFont
+
+    # Global fonts + their cmaps / CharStrings, built once and reused for
+    # every page's verification (parsing them per page was pure waste).
+    global_data = {}
+    for w in WEIGHTS:
+        gf = TTFont(os.path.join(GLOBAL_DIR, f"GlowSansSC-{w}.woff2"))
+        global_data[w] = (gf, gf.getBestCmap(), glyph_charstrings(gf))
+    layout_link = re.compile(
+        r'(<link rel="stylesheet" href="/_astro/Layout\.[^"]+\.css">)'
+    )
+    all_problems = []
+    total_global = 0
+    total_page = 0
+    for full, rel in pages:
+        slug, has_twikoo, nchars = page_meta[rel]
+        cs, html = page_charsets[rel]
+        # fonts.css
+        css = "".join(
+            FONT_FACE_TEMPLATE.format(slug=slug, w=w) for w in WEIGHTS
+        )
+        css_path = os.path.join(OUT_BASE, slug, "fonts.css")
+        with open(css_path, "w", encoding="utf-8") as f:
+            f.write(css)
+        # inject link after the Layout CSS link
+        m = layout_link.search(html)
+        if not m:
+            all_problems.append(f"{rel}: no Layout CSS <link> found, not injected")
+            continue
+        if f"/fonts/pages/{slug}/fonts.css" in html:
+            pass  # already injected (re-run on same dist)
+        else:
+            link = (
+                f'<link rel="stylesheet" href="/fonts/pages/{slug}/fonts.css">'
+            )
+            html = html[: m.end()] + link + html[m.end() :]
+            with open(full, "w", encoding="utf-8") as f:
+                f.write(html)
+        # verify subsets for this page
+        full_charset = set(cs) | set(dynamic_ui)
+        if has_twikoo:
+            full_charset |= set(map(ord, TWIKOO_UI_CHARS))
+        ok, problems, sizes = verify_page(slug, full_charset, global_data)
+        all_problems.extend(problems)
+        for w in WEIGHTS:
+            total_global += os.path.getsize(
+                os.path.join(GLOBAL_DIR, f"GlowSansSC-{w}.woff2")
+            )
+            total_page += sizes.get(w, 0)
+        gsum = sum(
+            os.path.getsize(os.path.join(GLOBAL_DIR, f"GlowSansSC-{w}.woff2"))
+            for w in WEIGHTS
+        )
+        psum = sum(sizes.values())
+        print(
+            f"[per-page-font-subsets] {rel}: slug={slug} chars={nchars} "
+            f"subsets={psum/1024:.0f}KB (global {gsum/1024:.0f}KB) "
+            f"twikoo={has_twikoo}"
+        )
+
+    # unicode-range on the site-wide rules (see docstring): without it,
+    # a character in no subset (e.g. the footer's ©) forces a download
+    # of the global file just to check coverage.
+    if patch_global_unicode_ranges(global_charset, global_data) != 4:
+        all_problems.append("unicode-range patch did not cover all 4 weights")
+    for gf, _, _ in global_data.values():
+        gf.close()
+    print(
+        f"[per-page-font-subsets] subset bytes total: {total_page/1024:.0f}KB "
+        f"vs global-everywhere {total_global/1024:.0f}KB"
+    )
+    if all_problems:
+        print("[per-page-font-subsets] FAIL:")
+        for p in all_problems[:20]:
+            print("  " + p)
+        sys.exit(1)
+    print(
+        f"[per-page-font-subsets] ok: {len(pages)} pages, "
+        "all subsets cover their page and glyphs are identical to global"
+    )
+
+
+if __name__ == "__main__":
+    main()

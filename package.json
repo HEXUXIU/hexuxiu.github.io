@@ -7,7 +7,7 @@
 		"dev": "astro dev",
 		"start": "astro dev",
 		"check": "astro check",
-		"build": "astro build && pagefind --site dist && node scripts/prune-font-face.mjs && node scripts/check-font-coverage.mjs",
+		"build": "astro build && pagefind --site dist && node scripts/prune-font-face.mjs && python3 scripts/per-page-font-subsets.py && node scripts/check-font-coverage.mjs",
 		"preview": "astro preview",
 		"astro": "astro",
 		"type-check": "tsc --noEmit",
