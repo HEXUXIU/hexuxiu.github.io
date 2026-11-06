@@ -5,10 +5,15 @@ export const GET: APIRoute = async ({ site }) => {
 	const sitemaps = [
 		"sitemap-pages.xml",
 		"sitemap-posts.xml",
-		"sitemap-essays.xml",
-		"sitemap-series.xml",
 		"sitemap-taxonomies.xml",
 	];
+	// NOTE: sitemap-essays.xml and sitemap-series.xml are intentionally
+	// NOT listed: the essays and seri collections are empty, so those two
+	// sitemaps contain 0 URLs. Listing an empty sitemap in the index
+	// wastes crawl budget and confuses indexers. If essays/series content
+	// is ever added, re-add the corresponding entry here (the route files
+	// src/pages/sitemap-essays.xml.ts and sitemap-series.xml.ts still
+	// exist and will generate the sitemap).
 	const now = new Date().toISOString();
 	const sitemapItems = sitemaps
 		.map(
