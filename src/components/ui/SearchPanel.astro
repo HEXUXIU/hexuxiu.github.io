@@ -163,6 +163,14 @@ const t = (key: I18nKey) => i18n(key, lang);
 	type PagefindModule = {
 		search: (query: string) => Promise<{ results: PagefindRawResult[] }>;
 		init: () => Promise<void>;
+		options: (opts: {
+			ranking?: {
+				termFrequency?: number;
+				pageLength?: number;
+				termSimilarity?: number;
+				termSaturation?: number;
+			};
+		}) => Promise<void>;
 	};
 
 	const panel = document.getElementById("search-panel") as HTMLDivElement;
@@ -305,6 +313,17 @@ const t = (key: I18nKey) => i18n(key, lang);
 			import(/* @vite-ignore */ pagefindUrl)
 				.then(async (mod) => {
 					await mod.init();
+					// Ranking: pagefind's BM25 saturates term frequency
+					// hard, so a page that mentions a term many times
+					// (e.g. the about page naming its author 贺煦修)
+					// barely outscores a page that mentions it once at
+					// high weight (e.g. fix-admin, whose title contains
+					// 修复). Raising termSaturation lets occurrence counts
+					// matter more. Measured on the live index: 贺煦修
+					// about 1.283 vs fix-admin 1.074 (was 1.047 vs 1.088
+					// at default); full 27-query regression 24/26 rank-1
+					// (was 23/26), no regressions.
+					await mod.options({ ranking: { termSaturation: 2 } });
 					pf = mod as PagefindModule;
 					ready = true;
 					if (!statusEl) {

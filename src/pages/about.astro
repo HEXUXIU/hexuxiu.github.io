@@ -69,6 +69,13 @@ const info = [
 		    div is immediately followed by its segmented keywords, so a
 		    search excerpt starts with the natural sentence (see PostPage). */}
 		<div style="display:none" aria-hidden="true" data-pagefind-weight="10">{searchKeywords(aboutLabel)}</div>
+		{/* Search keywords: this page's subject is the author, not the
+		    word "关于". Mirror PostPage's title treatment: the author
+		    name at title weight, so searching the author's name finds
+		    this page first (it was losing to fix-admin, whose title
+		    contains 修复 at weight 10). */}
+		<div style="display:none" aria-hidden="true" data-pagefind-weight="10">{profileConfig.name}</div>
+		<div style="display:none" aria-hidden="true" data-pagefind-weight="10">{searchKeywords(profileConfig.name)}</div>
 		<div style="display:none" aria-hidden="true" data-pagefind-weight="2">{metaDescription}</div>
 		<div style="display:none" aria-hidden="true" data-pagefind-weight="2">{searchKeywords(metaDescription)}</div>
 
