@@ -284,7 +284,7 @@ if (isPostPage) {
 				  media={favicon.theme && `(prefers-color-scheme: ${favicon.theme})`}
 			/>
 		))}
-		{(isPostPage || currentPath.startsWith('/about')) && <link rel="preload" href="/images/about-bg.webp" as="image" />}
+		{(isPostPage || currentPath.startsWith('/about')) && <link rel="preload" href="/images/about-bg.avif" as="image" />}
 		<script>
 			import { PageLifecycle } from "../scripts/page-lifecycle";
 			import { animateInMain, restoreContent, showSkeleton } from "../scripts/skeleton";
