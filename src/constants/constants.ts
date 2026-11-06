@@ -1,4 +1,4 @@
-export const PAGE_SIZE: number = 5;
+export const PAGE_SIZE: number = 8;
 export const ESSAYS_PAGE_SIZE: number = 15;
 export const LIGHT_MODE = "light",
 	DARK_MODE = "dark",
