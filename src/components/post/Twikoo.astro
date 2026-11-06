@@ -1,0 +1,83 @@
+---
+// Twikoo -- native Astro replacement for the former React island.
+// Renders nothing when integrationConfig.twikoo.envId is empty (it is
+// today), exactly as the React version did. When an envId is configured,
+// the comment container renders and the Twikoo script loads lazily once
+// the container scrolls into view (the client:visible equivalent), then
+// twikoo.init runs with the same options as before.
+import { integrationConfig } from "../../config";
+import { DEFAULT_LOCALE, type Locale } from "../../i18n/locales";
+
+interface Props {
+	lang?: Locale;
+}
+
+const { lang = DEFAULT_LOCALE } = Astro.props;
+const twikooLang = lang === "en" ? "en" : "zh-CN";
+const envId = integrationConfig.twikoo.envId;
+---
+
+{envId && (
+	<div id="twikoo-comment" data-env-id={envId} data-lang={twikooLang}></div>
+)}
+
+{envId && (
+	<script>
+		const container = document.getElementById(
+			"twikoo-comment",
+		) as HTMLDivElement | null;
+		if (container) {
+			const envId = container.dataset.envId ?? "";
+			const lang = container.dataset.lang ?? "zh-CN";
+			let loaded = false;
+			const load = () => {
+				if (loaded) return;
+				loaded = true;
+				if (
+					!document.querySelector(
+						'link[href="https://cdn.jsdelivr.net"][rel="preconnect"]',
+					)
+				) {
+					const preconnect = document.createElement("link");
+					preconnect.rel = "preconnect";
+					preconnect.href = "https://cdn.jsdelivr.net";
+					preconnect.crossOrigin = "";
+					document.head.appendChild(preconnect);
+				}
+				const script = document.createElement("script");
+				script.src =
+					"https://cdn.jsdelivr.net/npm/twikoo@1.7.13/dist/twikoo.min.js";
+				script.onload = () => {
+					(
+						window as unknown as {
+							twikoo: {
+								init: (opts: {
+									envId: string;
+									el: string;
+									lang: string;
+								}) => void;
+							};
+						}
+					).twikoo.init({
+						envId,
+						el: "#twikoo-comment",
+						lang,
+					});
+				};
+				container.innerHTML = "";
+				container.appendChild(script);
+			};
+			if ("IntersectionObserver" in window) {
+				const observer = new IntersectionObserver((entries) => {
+					if (entries.some((e) => e.isIntersecting)) {
+						observer.disconnect();
+						load();
+					}
+				});
+				observer.observe(container);
+			} else {
+				load();
+			}
+		}
+	</script>
+)}

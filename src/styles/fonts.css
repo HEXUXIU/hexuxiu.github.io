@@ -37,6 +37,48 @@
   size-adjust: 92%;
 }
 
+/* "Glow Sans SC Site" -- same files as the site-wide subsets above, but
+   under a separate family name so the browser only fetches them on demand.
+   The search overlay switches to this family when it opens (see
+   SearchPanel.astro): result excerpts can contain characters from any page,
+   outside the current page's per-page subset, so they render in the
+   site-wide subset instead of falling back to a system font. No
+   unicode-range here on purpose: when the overlay opens the files are
+   wanted for any character. They are never downloaded before that, because
+   no element uses this family until the overlay opens. */
+@font-face {
+  font-family: "Glow Sans SC Site";
+  src: local("Glow Sans SC"), url("/fonts/subset/GlowSansSC-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 92%;
+}
+@font-face {
+  font-family: "Glow Sans SC Site";
+  src: local("Glow Sans SC"), url("/fonts/subset/GlowSansSC-500.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 92%;
+}
+@font-face {
+  font-family: "Glow Sans SC Site";
+  src: local("Glow Sans SC"), url("/fonts/subset/GlowSansSC-700.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 92%;
+}
+@font-face {
+  font-family: "Glow Sans SC Site";
+  src: local("Glow Sans SC"), url("/fonts/subset/GlowSansSC-900.woff2") format("woff2");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 92%;
+}
+
 /* Novecento Sans Wide */
 @font-face {
   font-family: "Novecento Sans Wide";

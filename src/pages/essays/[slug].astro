@@ -5,7 +5,7 @@ import { profileConfig } from "../../config";
 import "../../styles/markdown.css";
 import "../../styles/expressive-code.css";
 import type { GetStaticPaths } from "astro";
-import Twikoo from "../../components/post/Twikoo";
+import Twikoo from "../../components/post/Twikoo.astro";
 import I18nKey from "../../i18n/i18nKey";
 import {
 	isFallbackPath,
@@ -106,7 +106,7 @@ const metaDescription =
 
 			{/* Comments */}
 			<div id="comments" class="py-6">
-				<Twikoo client:visible lang={locale} />
+				<Twikoo lang={locale} />
 			</div>
 		</div>
 

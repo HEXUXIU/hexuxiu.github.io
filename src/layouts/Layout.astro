@@ -22,7 +22,7 @@ import {
 	siteConfig,
 	siteMeta,
 } from "@/config";
-import { SearchPanel } from "../components/ui/SearchPanel.tsx";
+import SearchPanel from "../components/ui/SearchPanel.astro";
 import {
 	BANNER_HEIGHT,
 	BANNER_HEIGHT_EXTEND,
@@ -398,7 +398,7 @@ if (isPostPage) {
 				</div>
 			</div>
 			{featureConfig.analytics === "umami" && <Umami />}
-			{featureConfig.search && <SearchPanel client:idle lang={locale} />}
+			{featureConfig.search && <SearchPanel lang={locale} />}
 		</body>
 	</html>
 

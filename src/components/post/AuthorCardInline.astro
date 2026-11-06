@@ -1,0 +1,71 @@
+---
+// AuthorCardInline -- native Astro replacement for the former React island.
+// Renders the same Steam/Spotify status rows. The stores are never written
+// anywhere today, so the rows show "—" with grey dots; a tiny script keeps
+// the subscription so the rows would still update if a store is ever set,
+// exactly as the React version did.
+---
+
+<div class="flex flex-col gap-1">
+	<div class="flex items-center gap-1.5 min-w-0" data-status="steam">
+		<span class="relative flex h-2 w-2 shrink-0" data-dot-wrap>
+			<span
+				class="relative inline-flex h-2 w-2 rounded-full bg-secondary/40"
+				data-dot
+			></span>
+		</span>
+		<span class="font-deco text-[9px] text-secondary uppercase tracking-widest shrink-0">
+			Steam
+		</span>
+		<span class="font-deco text-[9px] text-primary uppercase tracking-widest truncate" data-text>
+			—
+		</span>
+	</div>
+	<div class="flex items-center gap-1.5 min-w-0" data-status="spotify">
+		<span class="relative flex h-2 w-2 shrink-0" data-dot-wrap>
+			<span
+				class="relative inline-flex h-2 w-2 rounded-full bg-secondary/40"
+				data-dot
+			></span>
+		</span>
+		<span class="font-deco text-[9px] text-secondary uppercase tracking-widest shrink-0">
+			Spotify
+		</span>
+		<span class="font-deco text-[9px] text-primary uppercase tracking-widest truncate" data-text>
+			—
+		</span>
+	</div>
+</div>
+
+<script>
+	import { $spotifyStatus, $steamStatus } from "../../store/app";
+
+	function bind(
+		row: HTMLElement,
+		store: typeof $steamStatus | typeof $spotifyStatus,
+	): void {
+		const dot = row.querySelector("[data-dot]") as HTMLSpanElement;
+		const wrap = row.querySelector("[data-dot-wrap]") as HTMLSpanElement;
+		const text = row.querySelector("[data-text]") as HTMLSpanElement;
+		store.subscribe((status) => {
+			text.textContent = status.text;
+			dot.classList.toggle("bg-accent", status.active);
+			dot.classList.toggle("bg-secondary/40", !status.active);
+			let ping = wrap.querySelector(".animate-ping") as HTMLSpanElement | null;
+			if (status.active && !ping) {
+				ping = document.createElement("span");
+				ping.className =
+					"absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60";
+				wrap.prepend(ping);
+			} else if (!status.active && ping) {
+				ping.remove();
+			}
+		});
+	}
+
+	for (const row of document.querySelectorAll<HTMLElement>("[data-status]")) {
+		if (row.dataset.bound) continue;
+		row.dataset.bound = "true";
+		bind(row, row.dataset.status === "spotify" ? $spotifyStatus : $steamStatus);
+	}
+</script>

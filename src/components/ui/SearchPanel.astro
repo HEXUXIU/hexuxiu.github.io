@@ -1,0 +1,341 @@
+---
+// SearchPanel -- native Astro replacement for the former React island.
+// Markup, classes, strings and behavior are a 1:1 translation of the old
+// SearchPanel.tsx: same overlay/panel, same Cmd/Ctrl+K + Esc shortcuts,
+// same 200ms debounce, top-10 results, same loading/empty/no-results
+// states, pagefind lazy-loaded only when the panel first opens (PROD only).
+// The panel is always in the DOM and hidden with opacity/pointer-events,
+// exactly like before, so screenshots are unchanged.
+//
+// Font note: result excerpts can contain characters from any page, outside
+// this page's per-page font subset. When the panel opens, the root gets the
+// .search-panel-open class, which switches --font-sans/--font-cn to the
+// "Glow Sans SC Site" family (the site-wide subset files, fetched on
+// demand, never on page load). The 300ms open transition masks the swap.
+import I18nKey from "../../i18n/i18nKey";
+import { DEFAULT_LOCALE, type Locale } from "../../i18n/locales";
+import { i18n } from "../../i18n/translation";
+
+interface Props {
+	lang?: Locale;
+}
+
+const { lang = DEFAULT_LOCALE } = Astro.props;
+const t = (key: I18nKey) => i18n(key, lang);
+---
+
+<div
+	id="search-overlay"
+	class="fixed inset-0 z-[9998] bg-black/60 backdrop-blur-sm transition-opacity duration-300 opacity-0 pointer-events-none"
+>
+</div>
+
+<div
+	id="search-panel"
+	class="fixed inset-x-0 top-0 md:top-[10vh] z-[9999] w-full max-w-2xl md:mx-auto transition-all duration-300 opacity-0 -translate-y-4 pointer-events-none"
+	data-searching={t(I18nKey.searching)}
+	data-results-suffix={t(I18nKey.searchResults)}
+	data-no-results={t(I18nKey.searchNoResults)}
+>
+	<div class="bg-hero md:border md:border-white/10 shadow-2xl overflow-hidden mx-0 md:mx-4">
+		<div id="search-header" class="flex items-center gap-2 px-4 md:px-6 py-4 md:py-5 border-b border-white/10">
+			<svg
+				class="w-5 h-5 text-white/30 shrink-0"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+			>
+				<circle cx="11" cy="11" r="8"></circle>
+				<path d="m21 21-4.3-4.3"></path>
+			</svg>
+			<input
+				id="search-input"
+				type="text"
+				placeholder={t(I18nKey.searchPlaceholder)}
+				class="flex-1 bg-transparent border-none outline-none text-white font-cn text-base placeholder:text-white/30 min-w-0"
+			/>
+			<kbd id="search-esc-kbd" class="hidden md:inline-flex items-center px-2 py-1 text-[10px] font-mono border border-white/20 text-white/30 bg-black/30 shrink-0">
+				ESC
+			</kbd>
+			<button
+				id="search-close-btn"
+				type="button"
+				aria-label={t(I18nKey.closeSearch)}
+				class="md:hidden flex h-[44px] w-[44px] shrink-0 items-center justify-center text-white/40 hover:text-white transition-colors"
+			>
+				<svg
+					class="w-4 h-4"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						d="M6 6l12 12M18 6L6 18"
+					></path>
+				</svg>
+			</button>
+		</div>
+
+		<div class="max-h-[calc(100dvh-64px)] md:max-h-[60vh] overflow-y-auto overscroll-contain">
+			<div id="search-empty" class="px-4 md:px-6 py-8 md:py-12 text-center">
+				<div class="flex flex-col items-center gap-3">
+					<svg
+						class="w-8 h-8 text-white/20"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="1.5"
+					>
+						<circle cx="11" cy="11" r="8"></circle>
+						<path d="m21 21-4.3-4.3"></path>
+					</svg>
+					<p class="font-cn text-sm text-white/40">
+						{t(I18nKey.searchHint)}
+					</p>
+					<div class="hidden md:flex items-center gap-2">
+						<kbd class="px-2 py-0.5 text-[10px] font-mono border border-white/20 text-white/40 bg-black/30">
+							⌘K
+						</kbd>
+						<span class="font-cn text-[11px] text-white/40">
+							{t(I18nKey.searchEmpty)}
+						</span>
+					</div>
+				</div>
+			</div>
+
+			<div id="search-no-results" class="px-4 md:px-6 py-8 md:py-12 text-center" hidden>
+				<p class="font-cn text-sm text-white/40">
+					<span id="search-no-results-text"></span> &ldquo;<span id="search-no-results-query"></span>&rdquo;
+				</p>
+			</div>
+
+			<div id="search-results" class="divide-y divide-white/5" hidden></div>
+
+			<div id="search-loading" class="px-4 md:px-6 py-8 md:py-12 flex justify-center" style="display:none">
+				<div class="flex items-center gap-3">
+					<div class="w-1.5 h-1.5 bg-[#39C5BB] rounded-full animate-bounce [animation-delay:0ms]"></div>
+					<div class="w-1.5 h-1.5 bg-[#39C5BB] rounded-full animate-bounce [animation-delay:150ms]"></div>
+					<div class="w-1.5 h-1.5 bg-[#39C5BB] rounded-full animate-bounce [animation-delay:300ms]"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<style>
+	/* Switch the whole panel to the site-wide font subset while it is open
+	   (see the header comment). --font-heading resolves through --font-sans,
+	   so overriding both variables here covers font-cn and font-heading. */
+	.search-panel-open {
+		--font-sans: "Futura PT", "Glow Sans SC Site", ui-sans-serif, system-ui, sans-serif;
+		--font-cn: "Futura PT", "Glow Sans SC Site", ui-sans-serif, system-ui, sans-serif;
+	}
+</style>
+
+<script>
+	import { $isSearchOpen, setIsSearchOpen } from "../../store/app";
+
+	interface PagefindRawResult {
+		id: string;
+		score: number;
+		words: number;
+		data: () => Promise<PagefindResultData>;
+	}
+
+	interface PagefindResultData {
+		url: string;
+		excerpt: string;
+		meta: {
+			title: string;
+			image?: string;
+		};
+		sub_results: Array<{
+			title: string;
+			url: string;
+			excerpt: string;
+		}>;
+	}
+
+	type PagefindModule = {
+		search: (query: string) => Promise<{ results: PagefindRawResult[] }>;
+		init: () => Promise<void>;
+	};
+
+	const panel = document.getElementById("search-panel") as HTMLDivElement;
+	const overlay = document.getElementById("search-overlay") as HTMLDivElement;
+	const header = document.getElementById("search-header") as HTMLDivElement;
+	const input = document.getElementById("search-input") as HTMLInputElement;
+	const escKbd = document.getElementById("search-esc-kbd") as HTMLElement;
+	const closeBtn = document.getElementById("search-close-btn") as HTMLButtonElement;
+	const emptyEl = document.getElementById("search-empty") as HTMLDivElement;
+	const noResultsEl = document.getElementById("search-no-results") as HTMLDivElement;
+	const noResultsText = document.getElementById("search-no-results-text") as HTMLSpanElement;
+	const noResultsQuery = document.getElementById("search-no-results-query") as HTMLSpanElement;
+	const resultsEl = document.getElementById("search-results") as HTMLDivElement;
+	const loadingEl = document.getElementById("search-loading") as HTMLDivElement;
+
+	const searchingLabel = panel.dataset.searching ?? "";
+	const resultsSuffix = panel.dataset.resultsSuffix ?? "";
+	const noResultsLabel = panel.dataset.noResults ?? "";
+
+	let query = "";
+	let results: PagefindResultData[] = [];
+	let loading = false;
+	let ready = false;
+	let pf: PagefindModule | null = null;
+	let pfLoaded = false;
+	let searchSeq = 0;
+	let searchTimeout: ReturnType<typeof setTimeout> | undefined;
+	let statusEl: HTMLSpanElement | null = null;
+
+	function escapeHtml(s: string): string {
+		return s
+			.replace(/&/g, "&amp;")
+			.replace(/</g, "&lt;")
+			.replace(/>/g, "&gt;")
+			.replace(/"/g, "&quot;")
+			.replace(/'/g, "&#39;");
+	}
+
+	function highlight(excerpt?: string): string {
+		if (!excerpt) return "";
+		try {
+			return excerpt.replace(
+				/<mark>(.*?)<\/mark>/g,
+				'<span class="text-[#39C5BB] font-bold">$1</span>',
+			);
+		} catch {
+			return "";
+		}
+	}
+
+	function renderStatus(): void {
+		if (!statusEl) return;
+		statusEl.textContent = loading
+			? searchingLabel
+			: `${results.length} ${resultsSuffix}`;
+		statusEl.classList.toggle("text-[#39C5BB]", loading);
+		statusEl.classList.toggle("text-white/30", !loading);
+	}
+
+	function renderRegions(): void {
+		const q = query.trim();
+		emptyEl.hidden = q !== "";
+		noResultsEl.hidden = !(q !== "" && !loading && results.length === 0);
+		if (!noResultsEl.hidden) {
+			noResultsText.textContent = noResultsLabel;
+			noResultsQuery.textContent = query;
+		}
+		resultsEl.hidden = results.length === 0;
+		loadingEl.style.display = loading ? "" : "none";
+		renderStatus();
+	}
+
+	function renderResults(): void {
+		resultsEl.innerHTML = results
+			.map(
+				(r) => `<a href="${escapeHtml(r.url)}" class="highlight-sweep block px-4 md:px-6 py-3 md:py-5 hover:bg-white/5 transition-colors group active:bg-white/10">
+					<h3 class="font-heading text-sm md:text-base text-white uppercase tracking-tight font-black group-hover:text-[#39C5BB] transition-colors line-clamp-2 mb-1">${escapeHtml(r.meta.title)}</h3>
+					<p class="font-cn text-[12px] md:text-[13px] text-white/60 leading-relaxed line-clamp-2">${highlight(r.excerpt)}</p>
+				</a>`,
+			)
+			.join("");
+		renderRegions();
+	}
+
+	async function doSearch(q: string): Promise<void> {
+		if (!q.trim() || !ready || !pf) {
+			results = [];
+			renderResults();
+			return;
+		}
+		const seq = ++searchSeq;
+		loading = true;
+		renderRegions();
+		try {
+			const { results: raw } = await pf.search(q);
+			if (seq !== searchSeq) return;
+			const sliced = raw.slice(0, 10);
+			const loaded = await Promise.all(sliced.map((r) => r.data()));
+			if (seq !== searchSeq) return;
+			results = loaded;
+		} catch {
+			if (seq === searchSeq) results = [];
+		} finally {
+			if (seq === searchSeq) {
+				loading = false;
+				renderResults();
+			}
+		}
+	}
+
+	function handleInput(): void {
+		query = input.value;
+		renderRegions();
+		if (searchTimeout) clearTimeout(searchTimeout);
+		searchTimeout = setTimeout(() => void doSearch(input.value), 200);
+	}
+
+	function onOpenChange(isOpen: boolean): void {
+		overlay.classList.toggle("opacity-100", isOpen);
+		overlay.classList.toggle("opacity-0", !isOpen);
+		overlay.classList.toggle("pointer-events-none", !isOpen);
+		panel.classList.toggle("opacity-100", isOpen);
+		panel.classList.toggle("opacity-0", !isOpen);
+		panel.classList.toggle("translate-y-0", isOpen);
+		panel.classList.toggle("-translate-y-4", !isOpen);
+		panel.classList.toggle("pointer-events-none", !isOpen);
+		panel.classList.toggle("search-panel-open", isOpen);
+		if (!isOpen) {
+			query = "";
+			results = [];
+			loading = false;
+			input.value = "";
+			renderResults();
+			return;
+		}
+		setTimeout(() => input.focus(), 100);
+		if (!pfLoaded && import.meta.env.PROD) {
+			pfLoaded = true;
+			const pagefindUrl = "/pagefind/pagefind.js";
+			import(/* @vite-ignore */ pagefindUrl)
+				.then(async (mod) => {
+					await mod.init();
+					pf = mod as PagefindModule;
+					ready = true;
+					if (!statusEl) {
+						statusEl = document.createElement("span");
+						statusEl.className =
+							"hidden md:inline text-[10px] font-deco uppercase tracking-widest shrink-0 text-white/30";
+						header.insertBefore(statusEl, escKbd);
+					}
+					renderStatus();
+				})
+				.catch((e) => {
+					console.warn("pagefind load error:", e);
+					ready = false;
+				});
+		}
+	}
+
+	$isSearchOpen.subscribe((isOpen) => onOpenChange(isOpen));
+
+	window.addEventListener("keydown", (e) => {
+		if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+			e.preventDefault();
+			setIsSearchOpen(!$isSearchOpen.get());
+		}
+		if (e.key === "Escape" && $isSearchOpen.get()) setIsSearchOpen(false);
+	});
+
+	input.addEventListener("input", handleInput);
+	overlay.addEventListener("click", () => setIsSearchOpen(false));
+	closeBtn.addEventListener("click", () => setIsSearchOpen(false));
+	resultsEl.addEventListener("click", (e) => {
+		if ((e.target as HTMLElement).closest("a")) setIsSearchOpen(false);
+	});
+</script>

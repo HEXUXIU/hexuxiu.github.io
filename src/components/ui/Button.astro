@@ -1,5 +1,9 @@
-import type { MouseEventHandler, ReactElement, ReactNode } from "react";
-
+---
+// Button -- native Astro replacement for the former React component.
+// Same props, same class composition (base + variant + caller classes),
+// same data-active/data-share attributes. No call site passes onClick
+// (interactive buttons are wired by id from page scripts), so this is a
+// pure presentational component now.
 type ButtonAs = "button" | "a";
 type ButtonVariant =
 	| "base"
@@ -12,12 +16,12 @@ type ButtonVariant =
 	| "icon"
 	| "unstyled";
 
-interface ButtonProps {
+interface Props {
 	as?: ButtonAs;
 	variant?: ButtonVariant;
 	active?: boolean;
 	className?: string;
-	children: ReactNode;
+	class?: string;
 	id?: string;
 	type?: "button" | "submit" | "reset";
 	href?: string;
@@ -26,9 +30,25 @@ interface ButtonProps {
 	title?: string;
 	disabled?: boolean;
 	ariaLabel?: string;
-	onClick?: MouseEventHandler<HTMLElement>;
 	dataShare?: string;
 }
+
+const {
+	as = "button",
+	variant = "base",
+	active,
+	className = "",
+	class: classProp = "",
+	id,
+	type = "button",
+	href,
+	target,
+	rel,
+	title,
+	disabled = false,
+	ariaLabel,
+	dataShare,
+} = Astro.props as Props;
 
 const baseClasses =
 	"inline-flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50";
@@ -50,67 +70,35 @@ const variantClasses: Record<ButtonVariant, string> = {
 	unstyled: "",
 };
 
-export default function Button({
-	as = "button",
-	variant = "base",
-	active,
-	className = "",
-	class: _class = "",
-	children,
-	id,
-	type = "button",
-	href,
-	target,
-	rel,
-	title,
-	disabled = false,
-	ariaLabel,
-	onClick,
-	dataShare,
-}: ButtonProps & { class?: string }): ReactElement {
-	const resolvedClassName = className || _class || "";
-	const classes = [baseClasses, variantClasses[variant], resolvedClassName]
-		.filter(Boolean)
-		.join(" ");
+const resolvedClassName = className || classProp || "";
+const classes = [baseClasses, variantClasses[variant], resolvedClassName]
+	.filter(Boolean)
+	.join(" ");
+const dataActive = active ? "true" : "false";
+---
 
-	const dataAttrs: Record<string, string> = {
-		"data-active": active ? "true" : "false",
-	};
-	if (dataShare) {
-		dataAttrs["data-share"] = dataShare;
-	}
-
-	if (as === "a") {
-		return (
-			<a
-				id={id}
-				href={href}
-				target={target}
-				rel={rel}
-				title={title}
-				aria-label={ariaLabel}
-				aria-disabled={disabled || undefined}
-				onClick={onClick}
-				className={classes}
-				{...dataAttrs}
-			>
-				{children}
-			</a>
-		);
-	}
-
-	return (
-		<button
-			id={id}
-			type={type}
-			disabled={disabled}
-			title={title}
-			aria-label={ariaLabel}
-			onClick={onClick}
-			className={classes}
-			{...dataAttrs}
-		>
-			{children}
-		</button>
-	);
-}
+{as === "a" ? (
+	<a
+		id={id}
+		href={href}
+		target={target}
+		rel={rel}
+		title={title}
+		aria-label={ariaLabel}
+		aria-disabled={disabled || undefined}
+		class={classes}
+		data-active={dataActive}
+		data-share={dataShare}
+	><slot /></a>
+) : (
+	<button
+		id={id}
+		type={type}
+		disabled={disabled}
+		title={title}
+		aria-label={ariaLabel}
+		class={classes}
+		data-active={dataActive}
+		data-share={dataShare}
+	><slot /></button>
+)}

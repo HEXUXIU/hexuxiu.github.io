@@ -1,6 +1,6 @@
 ---
 import { getCollection, render } from "astro:content";
-import { AuthorCardInline } from "../components/post/AuthorCardInline";
+import AuthorCardInline from "../components/post/AuthorCardInline.astro";
 import PostHero from "../components/post/PostHero.astro";
 import "../styles/markdown.css";
 import "../styles/expressive-code.css";
@@ -104,7 +104,7 @@ const info = [
 				</a>
 				<div class="hidden sm:block w-px h-8 bg-hover/30"></div>
 				<div class="flex flex-col gap-1 min-w-0">
-					<AuthorCardInline client:visible />
+					<AuthorCardInline />
 				</div>
 				<span
 					class="hidden sm:block ml-auto font-deco text-[10px] text-secondary uppercase tracking-[0.3em] shrink-0"

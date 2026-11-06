@@ -4,7 +4,6 @@ import { fileURLToPath } from "node:url";
 import loadYaml from "js-yaml";
 import { unified } from "@astrojs/markdown-remark";
 import mdx from "@astrojs/mdx";
-import react from "@astrojs/react";
 import { pluginCollapsibleSections } from "@expressive-code/plugin-collapsible-sections";
 import { pluginLineNumbers } from "@expressive-code/plugin-line-numbers";
 import yaml from "@rollup/plugin-yaml";
@@ -86,7 +85,6 @@ export default defineConfig({
 			: { entrypoint: "astro/assets/services/noop" },
 	},
 	integrations: [
-		react(),
 		icon({}),
 		swup({
 			containers: ["#content-main"],
