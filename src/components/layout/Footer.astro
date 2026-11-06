@@ -8,7 +8,9 @@ const licenseUrl = copyrightConfig.licenseUrl;
 <div class="relative w-full max-w-[840px] bg-hero paper-texture shadow-2xl px-6 md:px-16 py-12 overflow-hidden">
     <!-- Background image -->
     <div class="absolute inset-0 z-0">
-        <img
+        <picture class="block w-full h-full">
+            <source type="image/avif" srcset="/images/footer-bg-840w.avif" />
+            <img
             src="/images/footer-bg.webp"
             alt=""
             width="840"
@@ -17,6 +19,7 @@ const licenseUrl = copyrightConfig.licenseUrl;
             decoding="async"
             class="w-full h-full object-cover"
         />
+        </picture>
         <div class="absolute inset-0 bg-black/70"></div>
     </div>
 

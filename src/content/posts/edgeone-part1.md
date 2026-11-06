@@ -9,7 +9,7 @@ published: 2025-07-16
 
 最近腾讯出了个 EdgeOne 的免费 CDN 套餐，我也是直接薅上了！现在我这个博客用的就是它加速，速度简直是“nice”到飞起！🙈 看这速度，简直不要太爽！
 
-![EdgeOne 控制台截图](../assets/images/screenshot-1752640831229.webp)![EdgeOne 控制台截图](../assets/images/screenshot-1752664132117.webp)
+![EdgeOne 控制台截图](../assets/images/screenshot-1752640831229.avif)![EdgeOne 控制台截图](../assets/images/screenshot-1752664132117.avif)
 
 # 准备工作
 
@@ -21,7 +21,7 @@ published: 2025-07-16
 
 ### 方式1：发推到X（推荐）
 
-我们只需要去[EdgeOne 国际站](https://edgeone.ai/zh/redemption)（有备案的国内站更快哦，方法一样），三选一进行申请即可。 我是通过用Gemini生成了一篇推(中文推文好像也行)。然后等了3天就有了，发完推，不妨主动去 TencentCloudEO 的账号私信一下，说不定还能加速进程呢。。 ![EdgeOne 页面长截图](../assets/images/微信图片_20250716183851_12.webp)
+我们只需要去[EdgeOne 国际站](https://edgeone.ai/zh/redemption)（有备案的国内站更快哦，方法一样），三选一进行申请即可。 我是通过用Gemini生成了一篇推(中文推文好像也行)。然后等了3天就有了，发完推，不妨主动去 TencentCloudEO 的账号私信一下，说不定还能加速进程呢。。 ![EdgeOne 页面长截图](../assets/images/微信图片_20250716183851_12.avif)
 
 ### 方式2：加入EO的 Discord 服务器抢码（没有试）
 

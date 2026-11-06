@@ -18,7 +18,7 @@ pinned: false
 
 到现在除去grok外，较为稳定给大家提供了共计 **52.1亿**token的api服务！
 
-![TokenTokenBond 用量图](../assets/images/ttb-usage-chart.webp)
+![TokenTokenBond 用量图](../assets/images/ttb-usage-chart.avif)
 
 （而且还进行了一次狂欢，[[ ✨TokenTokenBond✨]限时免费领取您的疯狂（限时 5H） 套餐。有效期 5 小时 无限额度，无限并发！目前进行了性能优化与重构项目，欢迎测试！](https://www.nodeloc.com/t/topic/112695)  ，你看那个高高的柱子就是了）
 
@@ -28,7 +28,7 @@ pinned: false
 
 在这个假期期间
 
-![假期提交记录截图](../assets/images/m365-commits.webp)
+![假期提交记录截图](../assets/images/m365-commits.avif)
 
 完成了数次提交，似乎是从v0.7.0一路更新到目前的 **[v0.7.3](https://github.com/HEXUXIU/M365-Copilot2API/releases/tag/v0.7.3)**
 

@@ -16,8 +16,8 @@ pinned: false
 所做
 这是一个关于恩娜enna的Wiki：https://www.nodeloc.wiki/w/%E6%81%A9%E5%A8%9C%EF%BC%88NodeLoc%20%E5%A8%98%EF%BC%89
 这是初步制作的live2D模型的预览
-![Enna Live2D 预览](../assets/images/enna-preview-1.webp)
-![Enna Live2D 预览](../assets/images/enna-preview-2.webp)
+![Enna Live2D 预览](../assets/images/enna-preview-1.avif)
+![Enna Live2D 预览](../assets/images/enna-preview-2.avif)
 稍后会把模型文件发布
 对了，感觉Enna酱的中文名好奇怪 不知道能不能改
 比如说我自己随便翻译的：蒽雫?（因为实在是找不到en音的中文的对应啦）

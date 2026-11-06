@@ -41,10 +41,10 @@ pinned: false
 
 附打印测试和过程时截图：
 
-![打印测试](../assets/images/kyocera-print-test.webp)
+![打印测试](../assets/images/kyocera-print-test.avif)
 
-![打印机照片](../assets/images/kyocera-photo-1.webp)
+![打印机照片](../assets/images/kyocera-photo-1.avif)
 
-![打印机照片](../assets/images/kyocera-photo-2.webp)
+![打印机照片](../assets/images/kyocera-photo-2.avif)
 
 原发于 NodeLoc 论坛：https://www.nodeloc.com/t/topic/114339

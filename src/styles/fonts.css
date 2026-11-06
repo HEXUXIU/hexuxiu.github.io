@@ -1,7 +1,41 @@
-@import url("/fonts/glow-sans/400/index.css");
-@import url("/fonts/glow-sans/500/index.css");
-@import url("/fonts/glow-sans/700/index.css");
-@import url("/fonts/glow-sans/900/index.css");
+/* Glow Sans SC -- per-weight subsets containing exactly the characters
+   used on the site (see scripts/regen-font-subsets.py). Same typeface,
+   same glyphs, same metrics as the old cn-font-split files; one file per
+   weight instead of ~240, so each page downloads at most the weights it
+   uses and the Layout CSS drops from ~700KB to ~85KB of @font-face text.
+   Regenerate after adding content with new characters. */
+@font-face {
+  font-family: "Glow Sans SC";
+  src: local("Glow Sans SC"), url("/fonts/subset/GlowSansSC-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 92%;
+}
+@font-face {
+  font-family: "Glow Sans SC";
+  src: local("Glow Sans SC"), url("/fonts/subset/GlowSansSC-500.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 92%;
+}
+@font-face {
+  font-family: "Glow Sans SC";
+  src: local("Glow Sans SC"), url("/fonts/subset/GlowSansSC-700.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 92%;
+}
+@font-face {
+  font-family: "Glow Sans SC";
+  src: local("Glow Sans SC"), url("/fonts/subset/GlowSansSC-900.woff2") format("woff2");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 92%;
+}
 
 /* Novecento Sans Wide */
 @font-face {

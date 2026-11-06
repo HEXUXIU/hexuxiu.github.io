@@ -26,7 +26,7 @@ https://hexuxiu.github.io/
 
 然后，刚好昨天重新搞了个muse号，想不到能干嘛了，突然就回想到这个事
 
-![旧版博客首页截图](../assets/images/old-blog-homepage.webp)
+![旧版博客首页截图](../assets/images/old-blog-homepage.avif)
 
 *可能就是token太多了促成的吧…*
 

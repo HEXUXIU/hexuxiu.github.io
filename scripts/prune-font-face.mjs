@@ -45,7 +45,13 @@ function parseRange(spec) {
 }
 
 try {
-  // 1. Used charset: rendered HTML (text + attribute values) + pagefind + sources.
+  // 1. Used charset: rendered HTML (text + attribute values) + sources.
+//    NOTE: do NOT feed dist/pagefind files: they are compressed binary index
+//    fragments, not text. Decoding them as UTF-8 fabricates ~2600 codepoints
+//    (e.g. U+3A7C7, U+50F42) that never appear on any page, which kept 536
+//    dead @font-face blocks alive (626KB -> 233KB of @font-face text).
+//    The search index is built from the same dist HTML text, so nothing
+//    real is lost by skipping it.
   const used = new Set();
   const feed = (t) => {
     for (const ch of t) used.add(ch.codePointAt(0));
@@ -60,11 +66,6 @@ try {
       return " " + vals + " ";
     });
     feed(withAttrs);
-  }
-  for (const f of await walk(path.join(DIST, "pagefind"), [""])) {
-    try {
-      feed(await readFile(f, "utf8"));
-    } catch {}
   }
   for (const f of await walk(path.join(ROOT, "src"), [".ts", ".astro", ".md", ".mdx", ".yml", ".yaml", ".css"])) {
     feed(await readFile(f, "utf8"));
