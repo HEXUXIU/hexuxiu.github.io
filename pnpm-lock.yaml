@@ -122,6 +122,9 @@ importers:
       sanitize-html:
         specifier: ^2.18.1
         version: 2.18.1
+      segment:
+        specifier: ^0.1.3
+        version: 0.1.3
       sharp:
         specifier: ^0.35.5
         version: 0.35.5(@types/node@26.1.2)
@@ -5198,6 +5201,10 @@ packages:
 
   scrl@2.0.0:
     resolution: {integrity: sha512-BbbVXxrOn58Ge4wjOORIRVZamssQu08ISLL/AC2z9aATIsKqZLESwZVW5YR0Yz0C7qqDRHb4yNXJlQ8yW0SGHw==}
+
+  segment@0.1.3:
+    resolution: {integrity: sha512-4Kjk38q0ykMIK5a+uo2MjTM2EECJaLLQOkdptceiYHTFZU/iciWXiFiGTG8Or/cfO2RqjlLw/s6rqijxAFSKFQ==}
+    engines: {node: '>= 0.4.0'}
 
   semver@6.3.1:
     resolution: {integrity: sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==}
@@ -12165,6 +12172,8 @@ snapshots:
   sax@1.6.1: {}
 
   scrl@2.0.0: {}
+
+  segment@0.1.3: {}
 
   semver@6.3.1: {}
 

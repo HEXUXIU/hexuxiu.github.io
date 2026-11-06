@@ -44,7 +44,11 @@ const lines = previewLines;
 ---
 
 <div class="w-full max-w-[840px] mx-auto px-1">
-	<div class="bg-page paper-texture mb-8 px-6 md:px-16 py-10 space-y-5 shadow-2xl">
+	{/* data-pagefind-body on the intro card only: the XML preview below
+	    must stay OUT of the index (it duplicates every post's title and
+	    would make this page rank for everything). The intro (订阅/RSS/Atom)
+	    is what a 订阅 query should find. */}
+	<div data-pagefind-body class="bg-page paper-texture mb-8 px-6 md:px-16 py-10 space-y-5 shadow-2xl">
 		<div class="flex items-center gap-3">
 			<span class="text-[10px] md:text-[11px] font-deco font-semibold text-hint uppercase tracking-[0.2em]">
 				Subscribe

@@ -10,6 +10,7 @@ import { localizePath, resolveLocale } from "../i18n/locales";
 import { getSiteDescription, getSiteTitle } from "../i18n/site";
 import { i18n } from "../i18n/translation";
 import Layout from "../layouts/Layout.astro";
+import { searchKeywords } from "../utils/search-keywords";
 
 const locale = resolveLocale(Astro.currentLocale, Astro.url.pathname);
 const t = (key: I18nKey) => i18n(key, locale);
@@ -60,7 +61,19 @@ const info = [
 			style="opacity: 0.02; color: currentColor;"
 		>ABOUT</div>
 
+		{/* Search keywords: the page title ("关于") lives in PostHero,
+		    outside data-pagefind-body, so it was not searchable.
+		    Same fix as PostPage: duplicate it hidden, weighted high. */}
+		<div style="display:none" aria-hidden="true" data-pagefind-weight="10">{aboutLabel}</div>
+		{/* Segmented keywords (see search-keywords.ts). Each natural-text
+		    div is immediately followed by its segmented keywords, so a
+		    search excerpt starts with the natural sentence (see PostPage). */}
+		<div style="display:none" aria-hidden="true" data-pagefind-weight="10">{searchKeywords(aboutLabel)}</div>
+		<div style="display:none" aria-hidden="true" data-pagefind-weight="2">{metaDescription}</div>
+		<div style="display:none" aria-hidden="true" data-pagefind-weight="2">{searchKeywords(metaDescription)}</div>
+
 		<dl
+			data-pagefind-weight="5"
 			class="relative z-10 mb-10 grid grid-cols-2 gap-px border border-border/40 bg-border/40 sm:grid-cols-4"
 		>
 			{info.map((item) => (

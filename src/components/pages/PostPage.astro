@@ -17,6 +17,7 @@ import { i18n } from "../../i18n/translation";
 import Layout from "../../layouts/Layout.astro";
 import { getRelatedPosts, type SluggedPost } from "../../utils/content-utils";
 import { formatDate } from "../../utils/date-utils";
+import { searchKeywords } from "../../utils/search-keywords";
 import { stripMarkdown, truncate } from "../../utils/strip-markdown";
 
 interface Props {
@@ -73,6 +74,29 @@ const metaDescription =
 		/>
 
 		<article data-pagefind-body={isFallback ? undefined : true} class="relative w-full max-w-[840px] bg-page paper-texture shadow-2xl px-6 md:px-16 py-10 md:py-16 overflow-hidden min-h-[400px]">
+			{/* Search keywords: the title/description/tags live in PostHero,
+			    OUTSIDE data-pagefind-body, so pagefind 1.5.2 never indexes
+			    them (its title metadata is display-only, not searchable --
+			    verified: title-only words like 思考/京瓷 returned 0).
+			    Duplicate them here (display:none, no visual change) so
+			    title words are searchable. Title gets a high weight so a
+			    title match outranks a body mention (e.g. the About page's
+			    特色 section, which used to rank #1 for 数据清洗/日志). */}
+			<div style="display:none" aria-hidden="true" data-pagefind-weight="10">{entry.data.title}</div>
+			{/* Segmented keywords (see search-keywords.ts): title words at title
+			    weight, description/tag words at description weight. Each
+			    natural-text div is immediately followed by its segmented
+			    keywords, so a search excerpt starts with the natural
+			    sentence and only then shows the spaced keywords (pagefind
+			    picks the densest window; separated, the keywords alone
+			    would win the excerpt and hide the natural text). */}
+			<div style="display:none" aria-hidden="true" data-pagefind-weight="10">{searchKeywords(entry.data.title)}</div>
+			{(entry.data.description || (entry.data.tags && entry.data.tags.length > 0)) && (
+				<div style="display:none" aria-hidden="true" data-pagefind-weight="2">
+					{[entry.data.description, ...(entry.data.tags ?? [])].filter(Boolean).join(" ")}
+				</div>
+			)}
+			<div style="display:none" aria-hidden="true" data-pagefind-weight="2">{searchKeywords(entry.data.description, entry.data.tags)}</div>
 			<div class="watermark top-40 -left-10 text-[180px]" style="opacity: 0.02; color: currentColor;">ANALYSIS</div>
 
 		<div class="relative z-10 prose custom-md max-w-none prose-img:rounded-sm">
